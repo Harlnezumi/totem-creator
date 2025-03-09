@@ -1,2 +1,2 @@
-# totemcreator
-Make your own custom totem!
+# Minecraft totem creator
+Make your custom totem!
