@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Minecraft Totem Generator</title>
+
+  <!-- JSZip and FileSaver for generating the pack -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+
+  <style>
+    /* Base Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      position: relative;
+      overflow: hidden;
+      height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url("background.png") no-repeat center center/cover;
+      opacity: 0.6;
+      z-index: -1;
+    }
+
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #5cac3c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loader {
+      width: 55px;
+      aspect-ratio: 1;
+      --g1: conic-gradient(from 90deg at 3px 3px, #0000 90deg, #fff 0);
+      --g2: conic-gradient(from -90deg at 22px 22px, #0000 90deg, #fff 0);
+      background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
+      background-size: 25px 25px;
+      background-repeat: no-repeat;
+      animation: l7 1.5s infinite;
+    }
+    @keyframes l7 {
+      0%   { background-position: 0 0, 0 100%, 100% 100%; }
+      25%  { background-position: 100% 0, 0 100%, 100% 100%; }
+      50%  { background-position: 100% 0, 0 0, 100% 100%; }
+      75%  { background-position: 100% 0, 0 0, 0 100%; }
+      100% { background-position: 100% 100%, 0 0, 0 100%; }
+    }
+    .loader-text {
+      font-size: 20px;
+      margin-top: 30px;
+      color: white;
+    }
+    .fadeOut {
+      opacity: 0;
+    }
+
+    /* Main Container */
+    .container {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 30%;
+      transform: translate(-50%, -50%);
+      max-width: 800px;
+      width: 90%;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .showContainer {
+      display: block;
+      animation: fadeInDown 1s ease forwards;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    /* Subheader */
+    h2.subheader {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-weight: normal;
+      color: #333;
+    }
+
+    /* Custom Select styling */
+    :root {
+      --background-select: linear-gradient(to left, #004052 3rem, #005066 3rem);
+      --hover-color: #f39c12;
+    }
+    select {
+      appearance: none;
+      border: 0;
+      outline: 0;
+      background: none;
+      color: white;
+      box-shadow: none;
+    }
+    .select {
+      position: relative;
+      display: flex;
+      width: min(20rem, 90vw);
+      background: var(--background-select);
+      border-radius: 0.25rem;
+      overflow: hidden;
+    }
+    .select select {
+      flex: 1;
+      padding: 1em;
+      cursor: pointer;
+      font-size: 1rem;
+      color: white;
+      background: var(--background-select);
+    }
+    .select::after {
+      content: "\25BC";
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      transition: transform 0.25s, color 0.25s;
+      pointer-events: none;
+      font-size: 1rem;
+    }
+    .select:hover::after {
+      color: var(--hover-color);
+      animation: bounce 0.5s infinite alternate;
+    }
+    @keyframes bounce {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(5px); }
+      100% { transform: translateY(0); }
+    }
+    select option {
+      background: #004052;
+      color: white;
+      padding: 10px;
+    }
+    select option:hover,
+    select option:focus {
+      background: #005066;
+      color: #f39c12;
+    }
+
+    /* Download Button */
+    .button {
+      position: relative;
+      width: 150px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border: 1px solid #17795E;
+      background-color: #209978;
+    }
+    .button, .button__icon, .button__text {
+      transition: all 0.3s;
+    }
+    .button .button__text {
+      transform: translateX(22px);
+      color: #fff;
+      font-weight: 600;
+    }
+    .button .button__icon {
+      position: absolute;
+      transform: translateX(109px);
+      height: 100%;
+      width: 39px;
+      background-color: #17795E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .button .svg {
+      width: 20px;
+      fill: #fff;
+    }
+    .button:hover {
+      background: #17795E;
+    }
+    .button:hover .button__text {
+      color: transparent;
+    }
+    .button:hover .button__icon {
+      width: 148px;
+      transform: translateX(0);
+    }
+    .button:active .button__icon {
+      background-color: #146c54;
+    }
+    .button:active {
+      border: 1px solid #146c54;
+    }
+
+    /* File Upload Styles */
+    .file-upload-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .custom-file-upload .text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .custom-file-upload {
+      height: 200px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      cursor: pointer;
+      border: 2px dashed #cacaca;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0px 48px 35px -48px rgba(0,0,0,0.1);
+      text-align: center;
+      position: relative;
+    }
+    .custom-file-upload .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .custom-file-upload .icon svg {
+      height: 80px;
+      fill: rgba(75, 85, 99, 1);
+    }
+    .preview-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .preview-thumbnail {
+      max-width: 80px;
+      max-height: 80px;
+      object-fit: contain;
+    }
+    .file-info {
+      font-size: 0.8em;
+      color: #444;
+      text-align: center;
+      word-break: break-word;
+    }
+    audio {
+      width: 100%;
+      max-width: 200px;
+    }
+    .custom-file-upload input {
+      display: none;
+    }
+    .custom-file-upload.dragover {
+      border-color: #f39c12;
+      background-color: rgba(249, 249, 249, 0.8);
+    }
+
+    @media (max-width: 600px) {
+      .file-upload-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <!-- Main Interface -->
+  <div class="container">
+    <h1>Custom Minecraft Totem Generator</h1>
+
+    <!-- Minecraft Version Select -->
+    <div class="form-group">
+      <label for="version-select">Minecraft Version:</label>
+      <label class="select">
+        <select id="version-select" name="version">
+          <option value="" disabled selected>Select Minecraft Version</option>
+          <option value="18">1.20+</option>
+          <option value="15">1.19</option>
+          <option value="9">1.17-1.18</option>
+          <option value="7">1.13-1.16</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- File Upload Sections -->
+    <div class="file-upload-container">
+      <!-- PNG Upload -->
+      <div>
+        <label>Custom Totem Texture (PNG):</label>
+        <label class="custom-file-upload" for="image" id="upload-png">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"></path>
+            </svg>
+          </div>
+          <div class="text">Click or Drag PNG </div>
+          <h6 class="subheader"><br>(If no file is uploaded, default will be used)</h6>
+          <div class="preview-container"></div>
+          <input type="file" id="image" accept="image/png">
+        </label>
+      </div>
+
+      <!-- OGG Upload -->
+      <div>
+        <label>Custom Totem Sound (OGG):</label>
+        <label class="custom-file-upload" for="sound" id="upload-ogg">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"></path>
+            </svg>
+          </div>
+          <div class="text">Click or Drag OGG</div>
+          <h6 class="subheader"><br>(If no file is uploaded, default will be used)</h6>
+          <div class="preview-container"></div>
+          <input type="file" id="sound" accept="audio/ogg">
+        </label>
+      </div>
+    </div>
+
+    <!-- Download Button -->
+    <button class="button" type="button" onclick="generatePack()">
+      <span class="button__text">Download</span>
+      <span class="button__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35" class="svg">
+          <path d="M17.5,22.131a1.249,1.249,0,0,1-1.25-1.25V2.187a1.25,1.25,0,0,1,2.5,0V20.881A1.25,1.25,0,0,1,17.5,22.131Z"></path>
+          <path d="M17.5,22.693a3.189,3.189,0,0,1-2.262-.936L8.487,15.006a1.249,1.249,0,0,1,1.767-1.767l6.751,6.751a.7.7,0,0,0,.99,0l6.751-6.751a1.25,1.25,0,0,1,1.768,1.767l-6.752,6.751A3.191,3.191,0,0,1,17.5,22.693Z"></path>
+          <path d="M31.436,34.063H3.564A3.318,3.318,0,0,1,.25,30.749V22.011a1.25,1.25,0,1,1,2.5,0v8.738a.815.815,0,0,0,.814.814H31.436a.815.815,0,0,0,.814-.814V22.011a1.25,1.25,0,1,1,2.5,0v8.738A3.318,3.318,0,0,1,31.436,34.063Z"></path>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <script>
+    // Default files
+    const DEFAULT_TEXTURE = './totem.png';
+    const DEFAULT_SOUND = './sound_totem.ogg';
+    const DEFAULT_PACK_ICON = './pack.png';
+
+    // File Handling
+    function setupDragAndDrop(areaId, inputId) {
+      const dropArea = document.getElementById(areaId);
+      const h6 = dropArea.querySelector('h6.subheader');
+      const fileInput = document.getElementById(inputId);
+      const icon = dropArea.querySelector('.icon');
+      const text = dropArea.querySelector('.text');
+      const previewContainer = dropArea.querySelector('.preview-container');
+
+      // Drag & Drop Events
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+
+      dropArea.addEventListener('drop', handleDrop, false);
+      fileInput.addEventListener('change', handleFileSelect);
+
+      function highlight(e) {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+      }
+
+      function unhighlight(e) {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+      }
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files;
+        handleFiles(files);
+      }
+
+      function handleFiles(files) {
+        if (files.length > 0) {
+          const file = files[0];
+          if (validateFile(file, inputId)) {
+            showPreview(file, previewContainer, icon, text, h6);
+          }
+        }
+      }
+
+      function validateFile(file, inputId) {
+        const validTypes = {
+          image: ['image/png'],
+          sound: ['audio/ogg', 'audio/vorbis']
+        };
+
+        const fileType = inputId === 'image' ? 'image' : 'sound';
+        if (!validTypes[fileType].includes(file.type)) {
+          alert(`Invalid file type. Please upload ${fileType === 'image' ? 'a .png' : 'an .ogg'} file.`)
+          fileInput.value = '';
+          return false;
+        }
+        return true;
+      }
+
+      function showPreview(file, container, icon, text, h6) {
+        container.innerHTML = '';
+        h6.style.display = 'none';
+        icon.style.display = 'none';
+        text.style.display = 'none';
+
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.className = 'preview-thumbnail';
+          img.src = URL.createObjectURL(file);
+          container.appendChild(img);
+        } else if (file.type.startsWith('audio/')) {
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.src = URL.createObjectURL(file);
+          container.appendChild(audio);
+        }
+
+        const fileInfo = document.createElement('div');
+        fileInfo.className = 'file-info';
+        fileInfo.textContent = `${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+        container.appendChild(fileInfo);
+
+        container.style.display = 'flex';
+      }
+    }
+
+    // Initialize drag & drop
+    setupDragAndDrop("upload-png", "image");
+    setupDragAndDrop("upload-ogg", "sound");
+
+    // Resource Pack Generation
+    async function generatePack() {
+      const version = document.getElementById('version-select').value;
+      const imageFile = document.getElementById('image').files[0];
+      const soundFile = document.getElementById('sound').files[0];
+      
+      const zip = new JSZip();
+      
+      // Create pack.mcmeta
+      zip.file("pack.mcmeta", JSON.stringify({
+        pack: {
+          pack_format: parseInt(version),
+          description: "Custom Totem Pack"
+        }
+      }, null, 2));
+
+      // Add assets
+      const textureFolder = version >= 7 ? 'item' : 'items';
+      const texturePath = `assets/minecraft/textures/${textureFolder}/totem_of_undying.png`;
+      const soundPath = "assets/minecraft/sounds/item/totem/use_totem.ogg";
+
+      // Handle files
+      await Promise.all([
+        addFileToZip(zip, texturePath, imageFile, DEFAULT_TEXTURE),
+        addFileToZip(zip, soundPath, soundFile, DEFAULT_SOUND),
+        addFileToZip(zip, "pack.png", imageFile, DEFAULT_PACK_ICON)
+      ]);
+
+      // Generate ZIP
+      zip.generateAsync({type: "blob"}).then(content => {
+        saveAs(content, "custom_totem_pack.zip");
+      });
+    }
+
+    async function addFileToZip(zip, path, userFile, defaultPath) {
+      if (userFile) {
+        zip.file(path, userFile);
+      } else {
+        const response = await fetch(defaultPath);
+        const blob = await response.blob();
+        zip.file(path, blob);
+      }
+    }
+
+    // Initialization
+    window.addEventListener('load', () => {
+      document.getElementById('loading-screen').classList.add('fadeOut');
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.querySelector('.container').classList.add('showContainer');
+      }, 500);
+    });
+  </script>
+</body>
+</html>
