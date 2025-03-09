@@ -1,2 +1,2 @@
-# totemcreater
+# totemcreator
 Make your own custom totem!
