@@ -25,7 +25,6 @@
       --error-color: #ef4444;
       --success-color: #22c55e;
       --nav-height: 70px;
-      /* Defined variable for consistency */
     }
 
     * {
@@ -44,16 +43,11 @@
       background-attachment: fixed;
       width: 100%;
       min-height: 100vh;
-
-      /* FIX 1: Use flex-start so tall content flows down naturally instead of being centered (cut off) */
       display: flex;
       align-items: flex-start;
       justify-content: center;
-
       overflow-y: auto;
       color: var(--text-main);
-
-      /* FIX 2: Add padding to body to account for fixed navbar + breathing room */
       padding-top: calc(var(--nav-height) + 40px);
       padding-bottom: 40px;
     }
@@ -296,23 +290,18 @@
     /* Main Layout */
     .container {
       position: relative;
-      /* FIX 3: Remove fixed margin-top (handled by body padding now) */
       margin-top: 0;
-      /* FIX 4: Better default width for laptops/desktops */
       width: 90%;
       max-width: 850px;
-
       background: var(--card-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 2.5rem;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.8s ease forwards 0.3s;
-      /* Reduced delay slightly */
     }
 
     @keyframes fadeInUp {
@@ -786,13 +775,44 @@
 
     /* --- RESPONSIVE  --- */
 
-    /* Tablet / Small Laptop */
-    @media (max-width: 1024px) {
+    /* Laptop + Short Screens */
+    @media (max-width: 1366px),
+    (max-height: 850px) {
       .container {
-        width: 85%;
+        padding: 1.5rem 2rem;
+        max-width: 750px;
+      }
+
+      .drop-zone {
+        height: 130px;
+      }
+
+      .drop-zone svg {
+        width: 36px;
+        margin-bottom: 5px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .upload-grid {
+        margin-bottom: 1rem;
+        gap: 15px;
+      }
+
+      .reset-button {
+        top: 25px;
+        right: 25px;
       }
     }
 
+    /* Tablets */
     @media (max-width: 768px) {
       .topnav {
         padding: 0 1rem;
@@ -820,7 +840,6 @@
 
     /* Mobile */
     @media (max-width: 600px) {
-
       .container {
         width: 96%;
         padding: 1.5rem;
