@@ -9,15 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-  <script>
-    var OggVorbisEncoderConfig = {
-      TOTAL_MEMORY: 67108864,
-    };
-  </script>
-
+  <script>var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };</script>
   <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
+
   <style>
-    /* --- THEME VARIABLES --- */
     :root {
       --primary: #43b581;
       --primary-hover: #3ca374;
@@ -31,7 +26,11 @@
       --success-color: #22c55e;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: "Inter", sans-serif;
@@ -59,7 +58,7 @@
       z-index: -1;
     }
 
-    /* --- NAVIGATION BAR (Split Layout) --- */
+    /* Navigation */
     .topnav {
       position: fixed;
       top: 0;
@@ -69,7 +68,7 @@
       padding: 0 2rem;
       display: flex;
       align-items: center;
-      justify-content: space-between; /* Pushes Left and Right apart */
+      justify-content: space-between;
       z-index: 1000;
       background: rgba(32, 34, 37, 0.6);
       backdrop-filter: blur(12px);
@@ -77,14 +76,12 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
 
-    /* Left Container (Logo + Links) */
     .nav-left {
       display: flex;
       align-items: center;
       gap: 40px;
     }
 
-    /* Brand Styling (Titanium White) */
     .brand {
       display: flex;
       align-items: center;
@@ -110,8 +107,10 @@
       box-shadow: 0 4px 10px rgba(67, 181, 129, 0.4);
     }
 
-    /* Navigation Links */
-    .nav-links { display: flex; gap: 5px; }
+    .nav-links {
+      display: flex;
+      gap: 5px;
+    }
 
     .nav-btn {
       text-decoration: none;
@@ -134,7 +133,6 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Ko-Fi Button (Right Side) */
     .kofi-btn {
       display: flex;
       align-items: center;
@@ -155,9 +153,13 @@
       box-shadow: 0 6px 20px rgba(255, 94, 91, 0.5);
     }
 
-    .kofi-btn svg { width: 18px; height: 18px; stroke-width: 2.5; }
+    .kofi-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.5;
+    }
 
-    /* --- TOAST NOTIFICATIONS --- */
+    /* Toasts */
     #toast-container {
       position: fixed;
       top: 80px;
@@ -187,16 +189,43 @@
       animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .toast.error { border-left-color: var(--error-color); }
-    .toast.error svg { fill: var(--error-color); }
-    .toast.success { border-left-color: var(--success-color); }
-    .toast.success svg { fill: var(--success-color); }
-    .toast-content { font-size: 0.95rem; color: #fff; font-weight: 500; }
+    .toast.error {
+      border-left-color: var(--error-color);
+    }
 
-    @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
-    @keyframes slideOut { to { opacity: 0; transform: translateX(100%); } }
+    .toast.error svg {
+      fill: var(--error-color);
+    }
 
-    /* --- LOADING SCREEN --- */
+    .toast.success {
+      border-left-color: var(--success-color);
+    }
+
+    .toast.success svg {
+      fill: var(--success-color);
+    }
+
+    .toast-content {
+      font-size: 0.95rem;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideOut {
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+
+    /* Loader */
     #loading-screen {
       position: fixed;
       inset: 0;
@@ -230,20 +259,37 @@
     }
 
     @keyframes l7 {
-      0% { background-position: 0 0, 0 100%, 100% 100%; }
-      25% { background-position: 100% 0, 0 100%, 100% 100%; }
-      50% { background-position: 100% 0, 0 0, 100% 100%; }
-      75% { background-position: 100% 0, 0 0, 0 100%; }
-      100% { background-position: 100% 100%, 0 0, 0 100%; }
+      0% {
+        background-position: 0 0, 0 100%, 100% 100%;
+      }
+
+      25% {
+        background-position: 100% 0, 0 100%, 100% 100%;
+      }
+
+      50% {
+        background-position: 100% 0, 0 0, 100% 100%;
+      }
+
+      75% {
+        background-position: 100% 0, 0 0, 0 100%;
+      }
+
+      100% {
+        background-position: 100% 100%, 0 0, 0 100%;
+      }
     }
 
-    .fadeOut { opacity: 0; pointer-events: none; }
+    .fadeOut {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-    /* --- MAIN CONTAINER --- */
+    /* Main Layout */
     .container {
       position: relative;
       width: 60%;
-      margin-top: 70px; /* Offset for nav */
+      margin-top: 70px;
       max-width: 850px;
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -256,9 +302,13 @@
       animation: fadeInUp 0.8s ease forwards 0.5s;
     }
 
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-    /* --- RESET BUTTON --- */
     .reset-button {
       position: absolute;
       top: 40px;
@@ -285,11 +335,24 @@
       letter-spacing: 1px;
     }
 
-    .reset-button:hover { background: rgba(255, 54, 43, 0.35); }
-    .reset-button:hover .svg-icon { animation: spin 2s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+    .reset-button:hover {
+      background: rgba(255, 54, 43, 0.35);
+    }
 
-    /* --- FORMS & TYPOGRAPHY --- */
+    .reset-button:hover .svg-icon {
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(-360deg);
+      }
+    }
+
     h1 {
       text-align: center;
       margin-bottom: 2rem;
@@ -297,13 +360,21 @@
       letter-spacing: -0.5px;
       text-transform: uppercase;
       background: linear-gradient(to right, #fff, #b9bbbe);
-      background-clip: text;
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .form-group { margin-bottom: 1.5rem; }
-    label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-muted); }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
 
     select {
       width: 100%;
@@ -318,11 +389,15 @@
       transition: border-color 0.2s;
     }
 
-    select:focus { border-color: var(--primary); }
-    optgroup { background: #2f3136; }
-    .input-error { border-color: var(--error-color) !important; }
+    select:focus {
+      border-color: var(--primary);
+    }
 
-    /* --- DRAG & DROP ZONES --- */
+    optgroup {
+      background: #2f3136;
+    }
+
+    /* Drag & Drop */
     .upload-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -346,16 +421,37 @@
       overflow: hidden;
     }
 
-    .drop-zone:hover, .drop-zone.dragover {
+    .drop-zone:hover,
+    .drop-zone.dragover {
       border-color: var(--primary);
       background: rgba(67, 181, 129, 0.1);
     }
 
-    .drop-zone input { display: none; }
-    .drop-zone svg { width: 48px; fill: var(--text-muted); margin-bottom: 10px; transition: fill 0.3s; }
-    .drop-zone:hover svg { fill: var(--primary); }
-    .drop-zone p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px; }
-    .drop-zone small { color: #72767d; font-size: 0.75rem; }
+    .drop-zone input {
+      display: none;
+    }
+
+    .drop-zone svg {
+      width: 48px;
+      fill: var(--text-muted);
+      margin-bottom: 10px;
+      transition: fill 0.3s;
+    }
+
+    .drop-zone:hover svg {
+      fill: var(--primary);
+    }
+
+    .drop-zone p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .drop-zone small {
+      color: #72767d;
+      font-size: 0.75rem;
+    }
 
     .preview-media {
       display: none;
@@ -368,21 +464,159 @@
       z-index: 2;
     }
 
-    .preview-media img { max-height: 80px; object-fit: contain; margin-bottom: 10px; }
-    .preview-media audio { width: 90%; height: 30px; margin-bottom: 10px; }
+    .preview-media img {
+      max-height: 80px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
 
-    /* Small Drop Zone (For Icon) */
+    .preview-media audio {
+      width: 90%;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+
     .drop-zone-small {
       height: 140px;
       border-style: dashed;
       background: rgba(0, 0, 0, 0.2);
     }
-    .drop-zone-small svg { width: 32px; margin-bottom: 5px; }
-    .drop-zone-small p { font-size: 0.85rem; }
 
-    /* --- ADVANCED SETTINGS --- */
+    .drop-zone-small svg {
+      width: 32px;
+      margin-bottom: 5px;
+    }
+
+    /* Error States */
+    .drop-zone.input-error {
+      border-color: var(--error-color) !important;
+      background: rgba(239, 68, 68, 0.15) !important;
+      color: var(--error-color) !important;
+    }
+
+    .drop-zone.input-error svg {
+      fill: var(--error-color) !important;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-4px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(4px);
+      }
+    }
+
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    /* Ripple Checkbox */
+    .checkbox-wrapper {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      margin-top: 15px;
+      padding: 8px 0;
+      width: 100%;
+    }
+
+    .checkbox-input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-visual {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--text-muted);
+      background-color: transparent;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .checkbox-wrapper:hover .checkbox-visual {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 8px rgba(67, 181, 129, 0.15);
+    }
+
+    .checkbox-input:checked+.checkbox-visual {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(67, 181, 129, 0.4);
+    }
+
+    .checkbox-visual svg {
+      width: 14px;
+      height: 14px;
+      fill: white;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+    }
+
+    .checkbox-input:checked+.checkbox-visual svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .checkbox-label-content {
+      margin-left: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checkbox-main-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .checkbox-input:checked~.checkbox-label-content .checkbox-main-text {
+      color: white;
+    }
+
+    .checkbox-subtext {
+      font-size: 0.75rem;
+      color: #72767d;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .checkbox-container-aligned {
+      width: calc(50% - 10px);
+      margin-top: -1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Advanced Settings */
     .advanced-settings {
-      margin-top: 2rem;
+      margin-top: 1rem;
       margin-bottom: 1.5rem;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -391,7 +625,9 @@
       transition: border-color 0.3s;
     }
 
-    .advanced-settings[open] { border-color: var(--primary); }
+    .advanced-settings[open] {
+      border-color: var(--primary);
+    }
 
     .advanced-settings summary {
       padding: 1rem;
@@ -405,9 +641,21 @@
       transition: color 0.3s;
     }
 
-    .advanced-settings summary:hover { color: white; background: rgba(255, 255, 255, 0.02); }
-    .advanced-settings summary::after { content: '+'; font-size: 1.2rem; font-weight: bold; transition: transform 0.3s; }
-    .advanced-settings[open] summary::after { transform: rotate(45deg); }
+    .advanced-settings summary:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .advanced-settings summary::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: bold;
+      transition: transform 0.3s;
+    }
+
+    .advanced-settings[open] summary::after {
+      transform: rotate(45deg);
+    }
 
     .settings-content {
       padding: 1.5rem;
@@ -419,8 +667,15 @@
     }
 
     @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .settings-input {
@@ -434,10 +689,15 @@
       outline: none;
     }
 
-    .settings-input:focus { border-color: var(--primary); }
-    .full-width { grid-column: span 2; }
+    .settings-input:focus {
+      border-color: var(--primary);
+    }
 
-    /* --- DOWNLOAD BUTTON --- */
+    .full-width {
+      grid-column: span 2;
+    }
+
+    /* Download Button */
     .btn-download {
       width: 100%;
       padding: 1rem;
@@ -455,11 +715,21 @@
       transition: transform 0.2s, background 0.2s;
     }
 
-    .btn-download:hover { background: var(--primary-hover); transform: translateY(-2px); }
-    .btn-download:active { transform: translateY(0); }
-    .btn-download svg { width: 24px; fill: white; }
+    .btn-download:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
 
-    /* --- PROGRESS MODAL --- */
+    .btn-download:active {
+      transform: translateY(0);
+    }
+
+    .btn-download svg {
+      width: 24px;
+      fill: white;
+    }
+
+    /* Progress Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -485,8 +755,6 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    .modal-content h3 { margin-bottom: 20px; color: var(--text-main); }
-
     .progress-container {
       width: 100%;
       height: 10px;
@@ -496,24 +764,64 @@
       margin-bottom: 10px;
     }
 
-    .progress-bar { height: 100%; width: 0%; background-color: var(--primary); transition: width 0.3s ease; }
-    #progress-text { color: var(--text-muted); font-size: 0.9rem; font-family: monospace; }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
 
-    /* --- RESPONSIVE --- */
+    /* Responsive */
     @media (max-width: 768px) {
-      .topnav { padding: 0 1rem; }
-      .nav-left { gap: 15px; }
-      .brand span { display: none; }
-      .kofi-btn span { display: none; }
-      .kofi-btn { padding: 8px; border-radius: 8px; }
+      .topnav {
+        padding: 0 1rem;
+      }
+
+      .nav-left {
+        gap: 15px;
+      }
+
+      .brand span,
+      .kofi-btn span {
+        display: none;
+      }
+
+      .kofi-btn {
+        padding: 8px;
+        border-radius: 8px;
+      }
     }
 
     @media (max-width: 600px) {
-      .upload-grid { grid-template-columns: 1fr; }
-      .container { padding: 1.5rem; margin-top: 80px; width: 90%; }
-      .reset-button { position: relative; top: auto; right: auto; margin: 0 auto 20px auto; }
-      .settings-content { grid-template-columns: 1fr; }
-      .full-width { grid-column: span 1; }
+      .upload-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 1.5rem;
+        margin-top: 110px;
+        width: 90%;
+      }
+
+      .reset-button {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 0 auto 20px auto;
+      }
+
+      .settings-content {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: span 1;
+      }
+
+      .checkbox-container-aligned {
+        width: 100%;
+        margin-top: 0;
+      }
     }
   </style>
 </head>
@@ -523,24 +831,21 @@
     <div class="loader"></div>
     <div class="loader-text">Loading...</div>
   </div>
-
   <div id="toast-container"></div>
 
-<div class="topnav">
+  <div class="topnav">
     <div class="nav-left">
       <a href="index.html" class="brand">
         <img src="avatar.png" alt="Logo" />
         <span>Totem Generator</span>
       </a>
-      
       <nav class="nav-links">
         <a href="index.html" class="nav-btn active">Generator</a>
         <a href="pixel-art.html" class="nav-btn">Pixel Art</a>
       </nav>
     </div>
-
     <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
         <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
         <line x1="6" y1="1" x2="6" y2="4"></line>
@@ -562,13 +867,10 @@
     </button>
     <h1>Totem Generator</h1>
 
-    <!-- mcpack change based on Mc versions -->
     <div class="form-group">
       <label for="version-select">Target Version</label>
       <select id="version-select">
-        <option value="" disabled selected>
-          Select Minecraft Version...
-        </option>
+        <option value="" disabled selected>Select Minecraft Version...</option>
         <optgroup label="1.21 (Tricky Trials)">
           <option value="46">1.21.4</option>
           <option value="42">1.21.2 - 1.21.3</option>
@@ -602,8 +904,8 @@
             <path
               d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
           </svg>
-          <p><strong>Texture (PNG)</strong></p>
-          <small>Drag & Drop or Click</small>
+          <p><strong>Texture</strong></p>
+          <small>Any Image (Auto-converts to PNG)</small>
         </div>
         <div class="preview-media"></div>
         <input type="file" id="image" accept="image/*" />
@@ -615,16 +917,34 @@
             <path
               d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" />
           </svg>
-          <p><strong>Sound (OGG)</strong></p>
-          <small>Drag & Drop or Click</small>
+          <p><strong>Sound</strong></p>
+          <small>Any Audio (Auto-converts to OGG)</small>
         </div>
         <div class="preview-media"></div>
         <input type="file" id="sound" accept="audio/*" />
       </label>
     </div>
+
     <details class="advanced-settings">
       <summary>Advanced Settings</summary>
       <div class="settings-content">
+
+        <div class="form-group full-width">
+          <label class="checkbox-wrapper" for="remove-bg-check">
+            <input type="checkbox" id="remove-bg-check" class="checkbox-input">
+            <div class="checkbox-visual">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="checkbox-label-content">
+              <span class="checkbox-main-text">Auto-Remove Background</span>
+              <span class="checkbox-subtext">Detects and removes the background color</span>
+            </div>
+          </label>
+        </div>
 
         <div class="form-group">
           <label for="pack-name">Pack Name</label>
@@ -654,6 +974,7 @@
 
       </div>
     </details>
+
     <button class="btn-download" onclick="generatePack()">
       <svg viewBox="0 0 24 24">
         <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
@@ -661,6 +982,7 @@
       Download Resource Pack
     </button>
   </div>
+
   <div id="progress-modal" class="modal-overlay">
     <div class="modal-content">
       <h3>Converting Audio...</h3>
@@ -670,366 +992,274 @@
       <p id="progress-text">0%</p>
     </div>
   </div>
+
   <script>
-    // --- Toast Notification from guide ---
+    // --- Utils ---
     function showToast(message, type = "error") {
       const container = document.getElementById("toast-container");
       const toast = document.createElement("div");
-      toast.className = `toast ${type} opacity-0 transition-opacity duration-300`;
-
-      // Icon data
-      const iconPath =
-        type === "error"
-          ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-          : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
-
-      toast.innerHTML = `
-            <svg style="width:24px; height:24px; min-width:24px" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="${iconPath}" clip-rule="evenodd"/>
-            </svg>
-            <span class="toast-content">${message}</span>
-        `;
-
+      toast.className = `toast ${type} opacity-0`;
+      const iconPath = type === "error" ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
+      toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${iconPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
       container.appendChild(toast);
-
-      // Remove after 4 seconds
-      setTimeout(() => {
-        toast.style.animation = "slideOut 10s ease forwards";
-        toast.addEventListener("animationend", () => toast.remove());
-      }, 4000);
+      setTimeout(() => { toast.style.animation = "slideOut 0.4s ease forwards"; toast.addEventListener("animationend", () => toast.remove()); }, 4000);
     }
 
-    // --- Configuration: Default Files ---
-    const DEFAULTS = {
-      texture: "./totem.png",
-      sound: "./sound_totem.ogg",
-      icon: "./pack.png",
-    };
+    const DEFAULTS = { texture: "./totem.png", sound: "./sound_totem.ogg", icon: "./pack.png" };
+    let currentTextureFile = null;
 
-    // --- Drag and Drop ---
+    // --- Init & Listeners ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const bgCheck = document.getElementById('remove-bg-check');
+      if (bgCheck) {
+        bgCheck.addEventListener('change', async () => {
+          if (currentTextureFile) await updateTexturePreview(currentTextureFile);
+        });
+      }
+    });
+
+    // --- Drag & Drop ---
     function initDropZone(zoneId, inputId) {
       const zone = document.getElementById(zoneId);
       const input = document.getElementById(inputId);
       const preview = zone.querySelector(".preview-media");
       const initial = zone.querySelector(".initial-content");
 
-      // no idea what is happening here stackoverflow thank you so much
-      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-        zone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          if (eventName === "dragenter" || eventName === "dragover")
-            zone.classList.add("dragover");
-          if (e.dataTransfer.files.length > 0) {
-            input.files = e.dataTransfer.files;
-          }
-          else zone.classList.remove("dragover");
-        });
+      let dragCounter = 0;
+      let isErrorActive = false;
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false));
+
+      zone.addEventListener('dragenter', () => {
+        dragCounter++;
+        if (!isErrorActive) zone.classList.add('dragover');
       });
 
-      zone.addEventListener("drop", (e) => handleFiles(e.dataTransfer.files));
+      zone.addEventListener('dragleave', () => {
+        dragCounter--;
+        if (dragCounter <= 0) { dragCounter = 0; zone.classList.remove('dragover'); }
+      });
+
+      zone.addEventListener('drop', (e) => {
+        dragCounter = 0;
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          handleFiles(e.dataTransfer.files);
+        }
+      });
+
       input.addEventListener("change", (e) => handleFiles(e.target.files));
+
+      function triggerError(msg) {
+        isErrorActive = true;
+        zone.classList.remove('dragover');
+        zone.classList.add("input-error");
+        input.value = "";
+        zone.classList.add("shake");
+        setTimeout(() => zone.classList.remove("shake"), 500);
+        showToast(msg, "error");
+        setTimeout(() => { zone.classList.remove("input-error"); isErrorActive = false; }, 2000);
+      }
 
       function handleFiles(files) {
         if (!files.length) return;
         const file = files[0];
 
-        if (file.size > 10 * 1024 * 1024) {
-          return showToast("File is too big! Max 10MB.", "error");
-        }
+        if (file.size > 10 * 1024 * 1024) return triggerError("File is too big! Max 10MB.");
 
         const isImg = inputId === "image" || inputId === "pack-icon-input";
+        if (isImg && !file.type.startsWith("image/")) return triggerError("Please upload an image file!");
+        if (!isImg && !file.type.startsWith("audio/")) return triggerError("Please upload an audio file!");
 
-        //  File Types check
-        if (isImg && !file.type.includes("image")) {
-          zone.classList.add("input-error");
-          setTimeout(() => zone.classList.remove("input-error"), 2000);
-          return showToast("Please upload an image file!", "error");
-        }
-
-        // if (
-        //   !isImg &&
-        //   !file.type.includes("ogg") &&
-        //   !file.type.includes("vorbis")
-        // ) {
-        //   zone.classList.add("input-error");
-        //   setTimeout(() => zone.classList.remove("input-error"), 2000);
-        //   return showToast("Only OGG audio files are allowed!", "error");
-        // }
-
-        // Checking if audio was uploaded
-        if (!isImg && !file.type.includes("audio")) {
-          zone.classList.add("input-error");
-          setTimeout(() => zone.classList.remove("input-error"), 2000);
-          return showToast("Please upload an audio file!", "error");
-        }
         zone.classList.remove("input-error");
 
-        // show image and sound preview
-        initial.style.display = "none";
-        preview.style.display = "flex";
-        preview.innerHTML = "";
-
-        if (isImg) {
-          const img = document.createElement("img");
-          img.src = URL.createObjectURL(file);
-          preview.appendChild(img);
+        if (inputId === "image") {
+          currentTextureFile = file;
+          updateTexturePreview(file);
         } else {
-          const audio = document.createElement("audio");
-          audio.controls = true;
-          audio.src = URL.createObjectURL(file);
-          preview.appendChild(audio);
+          initial.style.display = "none";
+          preview.style.display = "flex";
+          preview.innerHTML = "";
+          const el = isImg ? document.createElement("img") : document.createElement("audio");
+          el.src = URL.createObjectURL(file);
+          if (!isImg) el.controls = true;
+          preview.appendChild(el);
+          const name = document.createElement("div");
+          name.style.marginTop = "8px"; name.style.fontSize = "0.8rem"; name.textContent = file.name;
+          preview.appendChild(name);
         }
-
-        const name = document.createElement("div");
-        name.style.fontSize = "0.8rem";
-        name.textContent = file.name;
-        preview.appendChild(name);
       }
     }
-    document.getElementById('pack-icon-input').addEventListener('change', function (e) {
-      const file = e.target.files[0];
-      if (file) {
-        document.getElementById('icon-preview-img').src = URL.createObjectURL(file);
-      }
-    });
+
     initDropZone("drop-png", "image");
     initDropZone("drop-ogg", "sound");
     initDropZone("drop-icon", "pack-icon-input");
 
-    // --- Removing Loading Screen ---
     window.addEventListener("load", () => {
-      const vSelect = document.getElementById("version-select");
-      vSelect.addEventListener("change", () =>
-        vSelect.classList.remove("input-error"),
-      );
-
-      setTimeout(() => {
-        document.getElementById("loading-screen").classList.add("fadeOut");
-        setTimeout(
-          () =>
-          (document.getElementById("loading-screen").style.display =
-            "none"),
-          800,
-        );
-      }, 800);
+      document.getElementById("version-select").addEventListener("change", function () { this.classList.remove("input-error"); });
+      setTimeout(() => { document.getElementById("loading-screen").classList.add("fadeOut"); setTimeout(() => document.getElementById("loading-screen").style.display = "none", 800); }, 800);
     });
 
-    // converting all soundfiles to ogg
+    // --- Processing ---
     async function convertToOgg(rawFile, onProgress) {
-      const audioCtx = new (
-        window.AudioContext || window.webkitAudioContext
-      )();
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const arrayBuffer = await rawFile.arrayBuffer();
       const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
       const channel0 = audioBuffer.getChannelData(0);
       let monoData = channel0;
-
       if (audioBuffer.numberOfChannels > 1) {
         const channel1 = audioBuffer.getChannelData(1);
         monoData = new Float32Array(channel0.length);
-        for (let i = 0; i < channel0.length; i++) {
-          monoData[i] = (channel0[i] + channel1[i]) / 2;
-        }
+        for (let i = 0; i < channel0.length; i++) monoData[i] = (channel0[i] + channel1[i]) / 2;
       }
-
       const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
-
-      // Progress bar
-      const CHUNK_LEN = audioBuffer.sampleRate * 3; // seconds per time
-      const totalSamples = monoData.length;
-
-      for (let i = 0; i < totalSamples; i += CHUNK_LEN) {
-        const end = Math.min(i + CHUNK_LEN, totalSamples);
-        const chunk = monoData.subarray(i, end);
-        encoder.encode([chunk]);
-
-        const percent = Math.round((end / totalSamples) * 100);
-
-        if (onProgress) {
-          onProgress(percent);
-        }
-
-        // Timeout
-        await new Promise((r) => setTimeout(r, 5));
+      const CHUNK_LEN = audioBuffer.sampleRate * 3;
+      for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
+        encoder.encode([monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length))]);
+        onProgress && onProgress(Math.round((Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) * 100));
+        await new Promise(r => setTimeout(r, 5));
       }
-
-      const blob = encoder.finish();
-      return blob;
+      return encoder.finish();
     }
 
-    // Converting all images to png
     function convertToPng(file) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = URL.createObjectURL(file);
-
         img.onload = () => {
-          // square size
           const size = Math.max(img.width, img.height);
-
-          // creating canvas
           const canvas = document.createElement("canvas");
-          canvas.width = size;
-          canvas.height = size;
+          canvas.width = size; canvas.height = size;
           const ctx = canvas.getContext("2d");
-
-          const offsetX = (img.width - size) / 2;
-          const offsetY = (img.height - size) / 2;
-
-          // draw imge
-          ctx.drawImage(img, offsetX, offsetY);
-
-          // returning a png blob
-          canvas.toBlob((blob) => {
-            if (blob) resolve(blob);
-            else reject(new Error("Canvas to Blob failed"));
-          }, "image/png");
+          ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2);
+          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Failed")), "image/png");
         };
-
-        img.onerror = (err) => reject(err);
+        img.onerror = reject;
       });
     }
-    // --- ZIP Generation ---
-    async function generatePack() {
-      // 1. Validate Version
-      const version = document.getElementById("version-select").value;
-      if (!version) {
-        document.getElementById("version-select").classList.add("input-error");
-        return showToast("Please select a version first!", "error");
+
+    function removeBackground(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width; canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          const rBg = data[0], gBg = data[1], bBg = data[2];
+          const tolerance = 25;
+          for (let i = 0; i < data.length; i += 4) {
+            if (Math.abs(data[i] - rBg) + Math.abs(data[i + 1] - gBg) + Math.abs(data[i + 2] - bBg) < tolerance && data[i + 3] > 0) data[i + 3] = 0;
+          }
+          ctx.putImageData(new ImageData(data, canvas.width, canvas.height), 0, 0);
+          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("BG Fail")), "image/png");
+        };
+        img.onerror = reject;
+      });
+    }
+
+    async function updateTexturePreview(file) {
+      const zone = document.getElementById('drop-png');
+      const preview = zone.querySelector(".preview-media");
+      const initial = zone.querySelector(".initial-content");
+      const isRemoveBg = document.getElementById('remove-bg-check').checked;
+
+      preview.style.opacity = "0.5";
+      let fileToRender = file;
+      if (isRemoveBg) {
+        try { fileToRender = await removeBackground(file); } catch (e) { console.error(e); }
       }
 
-      // 2. Process Image (Texture)
+      initial.style.display = "none";
+      preview.style.display = "flex";
+      preview.style.opacity = "1";
+      preview.innerHTML = "";
+
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(fileToRender);
+      img.style.backgroundImage = "conic-gradient(#2f3136 90deg, #202225 90deg 180deg, #2f3136 180deg 270deg, #202225 270deg)";
+      img.style.backgroundSize = "20px 20px";
+      img.style.borderRadius = "4px";
+      img.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
+      preview.appendChild(img);
+
+      const name = document.createElement("div");
+      name.style.fontSize = "0.8rem"; name.style.marginTop = "8px";
+      name.textContent = file.name + (isRemoveBg ? " (Processed)" : "");
+      preview.appendChild(name);
+    }
+
+    async function generatePack() {
+      const version = document.getElementById("version-select").value;
+      if (!version) { document.getElementById("version-select").classList.add("input-error"); return showToast("Please select a version first!", "error"); }
+
       const imageInput = document.getElementById("image").files[0];
+      const removeBgChecked = document.getElementById("remove-bg-check").checked;
       let finalImageFile = imageInput;
 
       if (imageInput) {
         try {
-          finalImageFile = await convertToPng(imageInput);
-        } catch (e) {
-          console.error(e);
-          return showToast("Failed to process image.", "error");
-        }
+          if (removeBgChecked) { showToast("Removing background...", "info"); finalImageFile = await removeBackground(imageInput); }
+          else { finalImageFile = await convertToPng(imageInput); }
+        } catch (e) { return showToast("Failed to process image.", "error"); }
       }
 
-      // 3. Process Audio (Convert to OGG if needed)
       let soundFile = document.getElementById("sound").files[0];
       if (soundFile && !soundFile.name.endsWith(".ogg")) {
         const modal = document.getElementById("progress-modal");
         const bar = document.getElementById("progress-bar");
         const text = document.getElementById("progress-text");
-
         modal.style.display = "flex";
-        showToast("Converting audio to .OGG...", "info");
-
         try {
-          soundFile = await convertToOgg(soundFile, (percent) => {
-            bar.style.width = percent + "%";
-            text.innerText = percent + "%";
-          });
+          soundFile = await convertToOgg(soundFile, (p) => { bar.style.width = p + "%"; text.innerText = p + "%"; });
           showToast("Audio converted!", "success");
-        } catch (err) {
-          console.error(err);
-          modal.style.display = "none";
-          return showToast("Audio conversion failed!", "error");
-        }
-
-        modal.style.display = "none";
-        bar.style.width = "0%";
-        text.innerText = "0%";
+        } catch (err) { modal.style.display = "none"; return showToast("Audio conversion failed!", "error"); }
+        modal.style.display = "none"; bar.style.width = "0%";
       }
 
-      // 4. Get Advanced Settings Data
-      const packNameVal = document.getElementById("pack-name").value.trim() || "Totem Pack";
-      const packDescVal = document.getElementById("pack-desc").value.trim() || "Custom Totem Pack generated by TotemGen";
-      const packIconFile = document.getElementById("pack-icon-input").files[0];
-
-      // 5. Initialize ZIP
       const zip = new JSZip();
+      zip.file("pack.mcmeta", JSON.stringify({ pack: { pack_format: parseInt(version), description: document.getElementById("pack-desc").value.trim() || "Custom Totem Pack" } }, null, 2));
 
-      // Generate pack.mcmeta with custom description
-      zip.file(
-        "pack.mcmeta",
-        JSON.stringify({
-          pack: {
-            pack_format: parseInt(version),
-            description: packDescVal,
-          },
-        }, null, 2)
-      );
-
-      // Determine texture folder (1.13+ change)
       const textureFolder = parseInt(version) >= 4 ? "item" : "items";
-
-      // Define assets to pack
       const assets = [
-        {
-          path: `assets/minecraft/textures/${textureFolder}/totem_of_undying.png`,
-          file: finalImageFile,
-          default: DEFAULTS.texture,
-        },
-        {
-          path: "assets/minecraft/sounds/item/totem/use_totem.ogg",
-          file: soundFile,
-          default: DEFAULTS.sound,
-        },
-        {
-          path: "pack.png",
-          // Priority: 1. Uploaded Icon, 2. Totem Texture, 3. Default
-          file: packIconFile || finalImageFile,
-          default: DEFAULTS.icon,
-        },
+        { path: `assets/minecraft/textures/${textureFolder}/totem_of_undying.png`, file: finalImageFile, default: DEFAULTS.texture },
+        { path: "assets/minecraft/sounds/item/totem/use_totem.ogg", file: soundFile, default: DEFAULTS.sound },
+        { path: "pack.png", file: document.getElementById("pack-icon-input").files[0] || finalImageFile, default: DEFAULTS.icon }
       ];
 
       try {
-        // Add files to ZIP
-        await Promise.all(
-          assets.map(async (asset) => {
-            if (asset.file) {
-              zip.file(asset.path, asset.file);
-            } else {
-              try {
-                const res = await fetch(asset.default);
-                if (res.ok) zip.file(asset.path, await res.blob());
-              } catch (e) {
-                console.warn(`Default asset missing: ${asset.default}`);
-              }
-            }
-          })
-        );
-
-        // Generate and Download
+        await Promise.all(assets.map(async (asset) => {
+          if (asset.file) zip.file(asset.path, asset.file);
+          else { try { const res = await fetch(asset.default); if (res.ok) zip.file(asset.path, await res.blob()); } catch (e) { } }
+        }));
         zip.generateAsync({ type: "blob" }).then((content) => {
-          // Sanitize filename
-          const safeName = packNameVal.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-          saveAs(content, `${safeName}.zip`);
+          saveAs(content, (document.getElementById("pack-name").value.trim().replace(/[^a-z0-9]/gi, '_').toLowerCase() || "totem_pack") + ".zip");
           showToast("Pack Generated Successfully!", "success");
         });
-      } catch (err) {
-        showToast("Error generating pack: " + err.message, "error");
-      }
+      } catch (err) { showToast("Error: " + err.message, "error"); }
     }
+
     function resetForm() {
       document.getElementById("version-select").selectedIndex = 0;
       document.getElementById("image").value = "";
       document.getElementById("sound").value = "";
       document.getElementById("pack-icon-input").value = "";
+      document.getElementById("pack-name").value = "";
+      document.getElementById("pack-desc").value = "";
+      document.getElementById("remove-bg-check").checked = false;
+      currentTextureFile = null;
 
-      const zones = ["drop-png", "drop-ogg", "drop-icon"];
-
-      zones.forEach(id => {
+      ["drop-png", "drop-ogg", "drop-icon"].forEach(id => {
         const zone = document.getElementById(id);
-        const initial = zone.querySelector(".initial-content");
-        const preview = zone.querySelector(".preview-media");
-
         zone.classList.remove("input-error");
-
-        initial.style.display = "block";
-        preview.style.display = "none";
-        preview.innerHTML = "";
+        zone.querySelector(".initial-content").style.display = "block";
+        zone.querySelector(".preview-media").style.display = "none";
+        zone.querySelector(".preview-media").innerHTML = "";
       });
-
-      showToast("All fields have been reset", "success");
+      showToast("All fields reset", "success");
     }
   </script>
 </body>
