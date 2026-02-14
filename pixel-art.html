@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Art</title>
+    <style>
+      :root {
+        --primary: #43b581;
+        --primary-hover: #3ca374;
+        --bg-color: #202225;
+        --card-bg: rgba(32, 34, 37, 0.95);
+        --input-bg: rgba(0, 0, 0, 0.2);
+        --border: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #b9bbbe;
+        --error-color: #ef4444;
+        --success-color: #22c55e;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-color);
+        background-image: url(background.png);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+        width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        color: var(--text-main);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+      }
+
+      /* Loading Screen */
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background-color: var(--bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease;
+      }
+
+      .loader {
+        width: 60px;
+        aspect-ratio: 1;
+        --g1: conic-gradient(
+          from 90deg at 3px 3px,
+          #0000 90deg,
+          var(--primary) 0
+        );
+        --g2: conic-gradient(
+          from -90deg at 22px 22px,
+          #0000 90deg,
+          var(--primary) 0
+        );
+        background: var(--g1), var(--g1), var(--g1), var(--g2), var(--g2),
+          var(--g2);
+        background-size: 25px 25px;
+        background-repeat: no-repeat;
+        animation: l7 1.5s infinite;
+      }
+
+      .loader-text {
+        font-size: 1.2rem;
+        margin-top: 25px;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      @keyframes l7 {
+        0% {
+          background-position: 0 0, 0 100%, 100% 100%;
+        }
+        25% {
+          background-position: 100% 0, 0 100%, 100% 100%;
+        }
+        50% {
+          background-position: 100% 0, 0 0, 100% 100%;
+        }
+        75% {
+          background-position: 100% 0, 0 0, 0 100%;
+        }
+        100% {
+          background-position: 100% 100%, 0 0, 0 100%;
+        }
+      }
+
+      .fadeOut {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Navigation Bar */
+      .topnav {
+        background-color: #333;
+        left: 0%;
+        padding: 0.7rem;
+        display: flex;
+        overflow: hidden;
+        gap: 10px;
+        z-index: 1000;
+        width: 100%;
+        position: fixed;
+        top: 0px;
+        align-items: center;
+      }
+
+      .topnav a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .topnav a:hover {
+        background-color: #555;
+      }
+
+      .topnav a.active {
+        pointer-events: none;
+        cursor: default;
+        background-color: #4caf50;
+      }
+      .topnav img {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        margin-right: 5px;
+      }
+
+      /* Main Container */
+      .container {
+        margin-top: 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+
+      /* The Grid */
+      .grid {
+        display: grid;
+        /* grid-template-columns: repeat(20, 1fr);  removed for dynamic*/
+        width: 500px;
+        height: 500px;
+        border: 2px solid #333;
+        background-color: #eee;
+        cursor: crosshair;
+      }
+
+      .cell {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: white;
+        user-select: none;
+      }
+
+      /* Palette */
+      .palette {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 10px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+      .color {
+        width: 40px;
+        height: 40px;
+        border-radius: 5%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .color:hover {
+        transform: scale(1.1);
+      }
+
+      .color.selected {
+        border-color: #333;
+        transform: scale(1.1);
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 20px;
+        width: 250px;
+        height: 100%;
+        background: rgb(32, 34, 37, 0.9);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .sidebar h2 {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: var(--text-main);
+      }
+      .sidebar p {
+        font-size: 1rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* Dropdown menu 🥀*/
+      .resolution-select-wrapper {
+        position: relative;
+        user-select: none;
+        width: 100%;
+        cursor: pointer;
+      }
+
+      .resolution-select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        position: relative;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--text-main);
+        font-size: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .resolution-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        border: 1px solid var(--border);
+        border-top: 0;
+        background: var(--bg-color);
+
+        transition: all 0.2s;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 100;
+        border-radius: 0 0 5px 5px;
+      }
+
+      .resolution-select-wrapper.open .resolution-options {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+      }
+
+      .resolution-option {
+        padding: 10px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        transition: background 0.1s;
+      }
+
+      .resolution-option:hover {
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+      }
+      .dropdown-arrow {
+        display: inline-block;
+        transition: transform 0.3s ease;
+      }
+      .resolution-select-wrapper.open .dropdown-arrow {
+        transform: rotate(180deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="loader"></div>
+      <div class="loader-text">Loading...</div>
+    </div>
+
+    <div class="sidebar">
+      <h4>Test</h4>
+      <p>Change texture resolution:</p>
+
+      <div class="resolution-select-wrapper">
+        <div class="resolution-select">
+          <span id="selected-text">16x16</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+
+        <div class="resolution-options">
+          <div class="resolution-option" data-value="16">16x16</div>
+          <div class="resolution-option" data-value="32">32x32</div>
+          <div class="resolution-option" data-value="64">64x64</div>
+          <div class="resolution-option" data-value="128">128x128</div>
+          <div class="resolution-option" data-value="256">256x256</div>
+        </div>
+      </div>
+
+      <input type="hidden" id="real-resolution" value="16" />
+    </div>
+
+    <div class="topnav">
+      <img src="avatar.png" alt="Avatar" />
+      <nav>
+        <a href="index.html">Totem Generator</a>
+        <a href="pixel-art.html" class="active">Pixel Art Maker</a>
+      </nav>
+    </div>
+
+    <div class="container">
+      <div class="grid"></div>
+
+      <div class="palette">
+        <div
+          class="color selected"
+          style="background-color: black"
+          data-color="black"
+        ></div>
+        <div class="color" style="background-color: tan" data-color="tan"></div>
+        <div
+          class="color"
+          style="background-color: #43b581"
+          data-color="#43b581"
+        ></div>
+        <div
+          class="color"
+          style="background-color: white"
+          data-color="white"
+        ></div>
+        <div
+          class="color"
+          style="background-color: #ef4444"
+          data-color="#ef4444"
+        ></div>
+        <div
+          class="color"
+          style="background-color: #3b82f6"
+          data-color="#3b82f6"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      // Loading Screen
+      window.addEventListener("load", function () {
+        let loader = document.getElementById("loading-screen");
+        setTimeout(function () {
+          loader.classList.add("fadeOut");
+          setTimeout(function () {
+            loader.style.display = "none";
+          }, 800);
+        });
+      });
+
+      // Variables
+      let gridElement = document.querySelector(".grid");
+      let colorButtons = document.querySelectorAll(".color");
+      let currentColor = "black";
+      let isDrawing = false;
+
+      // --- FIX 1: Define the scale variable here ---
+      let scale = 1;
+
+      // History Variables
+      let history = [];
+      let currentStroke = [];
+      let redoStack = [];
+
+      // Save history
+      function applyColor(cell) {
+        let prevColor = cell.style.backgroundColor;
+        if (prevColor !== currentColor) {
+          let move = {
+            cell: cell,
+            oldColor: prevColor,
+            newColor: currentColor,
+          };
+          currentStroke.push(move);
+
+          cell.style.backgroundColor = currentColor;
+        }
+      }
+
+      // Undo Function
+      function undoLastAction() {
+        if (history.length > 0) {
+          let lastStroke = history.pop();
+          redoStack.push(lastStroke);
+
+          for (let i = lastStroke.length - 1; i >= 0; i--) {
+            let action = lastStroke[i];
+            action.cell.style.backgroundColor = action.oldColor;
+          }
+        }
+      }
+
+      // Redo Function
+      function redoLastAction() {
+        if (redoStack.length > 0) {
+          let strokeToRedo = redoStack.pop();
+          history.push(strokeToRedo);
+
+          for (let i = 0; i < strokeToRedo.length; i++) {
+            let action = strokeToRedo[i];
+            action.cell.style.backgroundColor = action.newColor;
+          }
+        }
+      }
+
+      // Building the grid..
+      function createGrid(size) {
+        gridElement.innerHTML = "";
+        history = [];
+        redoStack = [];
+        currentStroke = [];
+
+        // Reset scale when creating new grid
+        scale = 1;
+        gridElement.style.transform = "scale(1)";
+
+        gridElement.style.gridTemplateColumns = "repeat(" + size + ", 1fr)";
+        gridElement.style.gridTemplateRows = "repeat(" + size + ", 1fr)";
+
+        let totalCells = size * size;
+
+        for (let i = 0; i < totalCells; i++) {
+          let cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.style.backgroundColor = "white";
+
+          cell.addEventListener("mousedown", function () {
+            if (redoStack.length > 0) {
+              redoStack = [];
+            }
+            isDrawing = true;
+            applyColor(cell);
+          });
+          cell.addEventListener("mouseover", function () {
+            if (isDrawing) {
+              applyColor(cell);
+            }
+          });
+
+          gridElement.appendChild(cell);
+        }
+      }
+
+      // Zoom Function (https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event)
+      function zoom(event) {
+        if (event.ctrlKey) {
+          event.preventDefault();
+          scale += event.deltaY * -0.001;
+          scale = Math.min(Math.max(1, scale), 10);
+          gridElement.style.transform = "scale(" + scale + ")";
+        }
+      }
+
+      // Init the grid
+      document.addEventListener("DOMContentLoaded", function () {
+        createGrid(16);
+
+        //listening for wheel event
+        gridElement.addEventListener("wheel", zoom);
+
+        document.addEventListener("mouseup", function () {
+          isDrawing = false;
+          if (currentStroke.length > 0) {
+            history.push(currentStroke);
+            currentStroke = [];
+          }
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.ctrlKey) {
+            if (e.key === "z") {
+              e.preventDefault();
+              undoLastAction();
+            }
+            if (e.key === "y") {
+              e.preventDefault();
+              redoLastAction();
+            }
+          }
+        });
+
+        for (let i = 0; i < colorButtons.length; i++) {
+          let button = colorButtons[i];
+          button.addEventListener("click", function () {
+            for (let j = 0; j < colorButtons.length; j++) {
+              colorButtons[j].classList.remove("selected");
+            }
+            button.classList.add("selected");
+            currentColor = button.getAttribute("data-color");
+          });
+        }
+      });
+
+      // Resolution dropdown
+      let wrapper = document.querySelector(".resolution-select-wrapper");
+      let triggerText = document.querySelector("#selected-text");
+      let hiddenInput = document.querySelector("#real-resolution");
+      let options = document.querySelectorAll(".resolution-option");
+
+      wrapper.addEventListener("click", function () {
+        this.classList.toggle("open");
+      });
+
+      for (let i = 0; i < options.length; i++) {
+        let option = options[i];
+        option.addEventListener("click", function (e) {
+          let value = this.getAttribute("data-value");
+          let text = this.textContent;
+
+          triggerText.textContent = text;
+          hiddenInput.value = value;
+
+          console.log("Rebuilding grid with size:", value);
+          createGrid(parseInt(value));
+        });
+      }
+
+      document.addEventListener("click", function (e) {
+        if (!wrapper.contains(e.target)) {
+          wrapper.classList.remove("open");
+        }
+      });
+    </script>
+  </body>
+</html>

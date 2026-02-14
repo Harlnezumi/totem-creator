@@ -1,564 +1,1016 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skin to Totem</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skin to Totem</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-  
-  <link rel="stylesheet" href="style.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-  <script>var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };</script>
-  <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
-</head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+    <script>
+      var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
+  </head>
 
-<body>
-  <input class="hidden-check" type="checkbox" id="theme" />
-  <label for="theme" class="theme-toggle">
-    <svg id="sun-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-      <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
-      <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
-    </svg>
-    <svg id="moon-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
-    </svg>
-  </label>
-  
-  <div class="dark-back"></div>
-  <div class="light-back"></div>
+  <body>
+    <input class="hidden-check" type="checkbox" id="theme" />
+    <label for="theme" class="theme-toggle">
+      <svg
+        id="sun-icon"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+        <path
+          d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
+        ></path>
+      </svg>
+      <svg
+        id="moon-icon"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path
+          d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
+        ></path>
+      </svg>
+    </label>
 
-  <div id="loading-screen">
-    <div class="loader"></div>
-    <div class="loader-text">Loading...</div>
-  </div>
-  <div id="toast-container"></div>
-  <div id="progress-modal" class="modal-overlay">
-    <div class="modal-content">
-      <h3>Processing...</h3>
-      <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
-      <p id="progress-text">0%</p>
+    <div class="dark-back"></div>
+    <div class="light-back"></div>
+
+    <div id="loading-screen">
+      <div class="loader"></div>
+      <div class="loader-text">Loading...</div>
     </div>
-  </div>
+    <div id="toast-container"></div>
+    <div id="progress-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Processing...</h3>
+        <div class="progress-container">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <p id="progress-text">0%</p>
+      </div>
+    </div>
 
-  <div class="app-wrapper">
-    <div class="topnav">
-      <div class="nav-left">
-        <a href="index.html" class="brand">
-          <img src="avatar.png" alt="Logo" />
-          <span>Totem Generator</span>
+    <div class="app-wrapper">
+      <div class="topnav">
+        <div class="nav-left">
+          <a href="index.html" class="brand">
+            <img src="img/avatar.png" alt="Logo" />
+            <span>Totem Generator</span>
+          </a>
+          <nav class="nav-links">
+            <a href="index.html" class="nav-btn">Generator</a>
+            <a href="skin-to-totem.html" class="nav-btn active"
+              >Skin to Totem</a
+            >
+          </nav>
+        </div>
+        <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
+          <span>Buy me a Coffee</span>
         </a>
-        <nav class="nav-links">
-          <a href="index.html" class="nav-btn">Generator</a>
-          <a href="skin-to-totem.html" class="nav-btn active">Skin to Totem</a>
-        </nav>
-      </div>
-      <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-          <line x1="6" y1="1" x2="6" y2="4"></line>
-          <line x1="10" y1="1" x2="10" y2="4"></line>
-          <line x1="14" y1="1" x2="14" y2="4"></line>
-        </svg>
-        <span>Buy me a Coffee</span>
-      </a>
-    </div>
-
-    <div class="container">
-      <button class="reset-button" onclick="resetForm()" title="Reset all fields">
-        <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff342b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-          <path d="M3 3v5h5"></path>
-        </svg>
-        <span class="lable">Reset</span>
-      </button>
-
-      <h1>Skin to Totem</h1>
-
-      <div class="main-grid">
-        <div class="input-section">
-          <label class="drop-zone-mini" id="drop-skin">
-            <div class="initial-content" style="display: flex; align-items: center; gap: 12px">
-              <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-              <div class="drop-zone-text">
-                <h4>Drag Skin Image</h4>
-                <p>Or click to upload</p>
-              </div>
-            </div>
-            <div class="preview-media-small"></div>
-            <input type="file" id="skin-file-input" accept="image/*" />
-          </label>
-
-          <div class="or-divider"><span>OR</span></div>
-
-          <div class="skin-input-group">
-            <input type="text" id="username-input" class="text-input" placeholder="Username" />
-            <button class="btn-fetch" onclick="fetchSkin()">Load</button>
-          </div>
-
-          <label class="style-label">Style</label>
-          <div class="pure-dropdown-container" id="style-dropdown">
-            <input class="hidden-check dropdown" type="checkbox" id="dropdown-style" name="dropdown-style"/>
-            <label class="for-dropdown" for="dropdown-style">
-              <div style="display: flex; align-items: center;">
-                <img src="img/steve-tiny-preview.png" id="selected-style-icon" class="style-preview-icon" alt="icon" />
-                <div>
-                  <div id="selected-style-title" style="line-height: 1;">Mini me</div>
-                  <div id="selected-style-desc" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">A mini version of your skin!</div>
-                </div>
-              </div>
-              <i class="uil uil-angle-down"></i>
-            </label>
-            <div class="section-dropdown"> 
-              <a href="javascript:void(0)" onclick="selectStyle('mini')">
-                <img src="img/steve-tiny-preview.png" class="style-preview-icon" alt="mini" /> 
-                <div>
-                  <div style="line-height: 1;">Mini me</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">A mini version of your skin!</div>
-                </div>
-              </a>
-              <a href="javascript:void(0)" onclick="selectStyle('full')">
-                <img src="img/steve-big-preview.png" class="style-preview-icon" alt="full" />
-                <div>
-                  <div style="line-height: 1;">Full body</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">A full version of your skin!</div>
-                </div>
-              </a>
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label class="checkbox-wrapper" for="outer-layer-check">
-              <input type="checkbox" id="outer-layer-check" class="checkbox-input" checked onchange="fetchSkinIfUsername()" />
-              <div class="checkbox-visual"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
-              <div class="checkbox-label-content"><span class="checkbox-main-text">Outer Layer</span><span class="checkbox-subtext">Include hat and jacket layers</span></div>
-            </label>
-
-            <label class="checkbox-wrapper" id="hd-layer-wrapper" for="hd-layer-check">
-              <input type="checkbox" id="hd-layer-check" class="checkbox-input" onchange="fetchSkinIfUsername()" />
-              <div class="checkbox-visual"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
-              <div class="checkbox-label-content"><span class="checkbox-main-text">HD Totem</span><span class="checkbox-subtext">Use highly detailed 32x32 resolution</span></div>
-            </label>
-          </div>
-        </div>
-
-        <div class="main-preview-area" id="skin-preview">
-          <img src="img/steve-tiny-preview.png" id="main-preview-img" alt="Preview" />
-        </div>
       </div>
 
-      <div class="bottom-section">
-        <div>
-          <label class="style-label">Target Version</label>
-          <div class="pure-dropdown-container">
-            <input class="hidden-check dropdown" type="checkbox" id="dropdown-version" name="dropdown-version"/>
-            <label class="for-dropdown" for="dropdown-version" id="version-dropdown-label">
-              <span id="version-label-text">Select Minecraft Version...</span> <i class="uil uil-angle-down"></i>
-            </label>
-            <div class="section-dropdown" id="version-select-box"> 
-              
-              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-21" name="v1-21"/>
-              <label class="for-dropdown-sub" for="v1-21">1.21 (Tricky Trials) <i class="uil uil-plus"></i></label>
-              <div class="section-dropdown-sub"> 
-                <a href="javascript:void(0)" onclick="selectVersion('46', '1.21.4')">1.21.4</a>
-                <a href="javascript:void(0)" onclick="selectVersion('42', '1.21.2 - 1.21.3')">1.21.2 - 1.21.3</a>
-                <a href="javascript:void(0)" onclick="selectVersion('34', '1.21 - 1.21.1')">1.21 - 1.21.1</a>
-              </div>
-
-              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-20" name="v1-20"/>
-              <label class="for-dropdown-sub" for="v1-20">1.20 (Trails & Tales) <i class="uil uil-plus"></i></label>
-              <div class="section-dropdown-sub"> 
-                <a href="javascript:void(0)" onclick="selectVersion('32', '1.20.5 - 1.20.6')">1.20.5 - 1.20.6</a>
-                <a href="javascript:void(0)" onclick="selectVersion('22', '1.20.3 - 1.20.4')">1.20.3 - 1.20.4</a>
-                <a href="javascript:void(0)" onclick="selectVersion('18', '1.20.2')">1.20.2</a>
-                <a href="javascript:void(0)" onclick="selectVersion('15', '1.20 - 1.20.1')">1.20 - 1.20.1</a>
-              </div>
-
-              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-19" name="v1-19"/>
-              <label class="for-dropdown-sub" for="v1-19">1.19 (The Wild Update) <i class="uil uil-plus"></i></label>
-              <div class="section-dropdown-sub"> 
-                <a href="javascript:void(0)" onclick="selectVersion('13', '1.19.4')">1.19.4</a>
-                <a href="javascript:void(0)" onclick="selectVersion('12', '1.19.3')">1.19.3</a>
-                <a href="javascript:void(0)" onclick="selectVersion('9', '1.19 - 1.19.2')">1.19 - 1.19.2</a>
-              </div>
-
-            </div>
-          </div>
-          <input type="hidden" id="version-select" value="">
-        </div>
-
-        <input class="hidden-check" type="checkbox" id="advanced-toggle"/>
-        <div class="advanced-settings-container">
-          <label class="advanced-toggle-label" for="advanced-toggle">
-            Extra Settings <i class="uil uil-plus"></i>
-          </label>
-          <div class="advanced-content-wrapper">
-            <div class="advanced-content-inner">
-              <div class="settings-content">
-                
-                <div style="grid-column: span 2; display: flex; gap: 15px;">
-                  <div id="sym-arms-wrapper" style="flex: 1; transition: opacity 0.3s ease;">
-                    <label class="style-label" style="font-size: 0.85rem;">Symmetrical Arms (Mini)</label>
-                    <div class="pure-dropdown-container">
-                      <input class="hidden-check dropdown" type="checkbox" id="dropdown-sym-arms" name="dropdown-sym-arms"/>
-                      <label class="for-dropdown" for="dropdown-sym-arms" style="padding: 10px 14px; font-size: 0.9rem;">
-                        <span id="sym-arms-label">Off</span> <i class="uil uil-angle-down"></i>
-                      </label>
-                      <div class="section-dropdown"> 
-                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'none', 'Off')">Off</a>
-                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'right-to-left', 'Reflect Right (to Left)')">Reflect Right (to Left)</a>
-                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'left-to-right', 'Reflect Left (to Right)')">Reflect Left (to Right)</a>
-                      </div>
-                    </div>
-                    <input type="hidden" id="sym-arms" value="none">
-                  </div>
-
-                  <div id="sym-legs-wrapper" style="flex: 1; transition: opacity 0.3s ease;">
-                    <label class="style-label" style="font-size: 0.85rem;">Symmetrical Legs (Mini)</label>
-                    <div class="pure-dropdown-container">
-                      <input class="hidden-check dropdown" type="checkbox" id="dropdown-sym-legs" name="dropdown-sym-legs"/>
-                      <label class="for-dropdown" for="dropdown-sym-legs" style="padding: 10px 14px; font-size: 0.9rem;">
-                        <span id="sym-legs-label">Off</span> <i class="uil uil-angle-down"></i>
-                      </label>
-                      <div class="section-dropdown"> 
-                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'none', 'Off')">Off</a>
-                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'right-to-left', 'Reflect Right (to Left)')">Reflect Right (to Left)</a>
-                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'left-to-right', 'Reflect Left (to Right)')">Reflect Left (to Right)</a>
-                      </div>
-                    </div>
-                    <input type="hidden" id="sym-legs" value="none">
-                  </div>
-                </div>
-
-                <label class="drop-zone-extra" id="drop-ogg">
-                  <div class="initial-content" style="display: flex; align-items: center; gap: 10px">
-                    <svg viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                    <span style="color: var(--text-muted); font-weight: 600">Sound</span>
-                  </div>
-                  <div class="preview-media-small"></div>
-                  <input type="file" id="sound" accept="audio/*" />
-                </label>
-
-                <label class="drop-zone-extra" id="drop-icon">
-                  <div class="initial-content" style="display: flex; align-items: center; gap: 10px">
-                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
-                    <span style="color: var(--text-muted); font-weight: 600">Pack Icon</span>
-                  </div>
-                  <div class="preview-media-small"></div>
-                  <input type="file" id="pack-icon-input" accept="image/png" />
-                </label>
-
-                <div style="grid-column: span 2">
-                  <input type="text" id="pack-name" class="text-input" placeholder="Custom Totem Pack" title="Hint: Enter a unique name for your resource pack to identify it easily in Minecraft!" />
-                </div>
-                <div style="grid-column: span 2">
-                  <input type="text" id="pack-desc" class="text-input" placeholder="Pack Description" />
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-download" onclick="generatePack()">
-          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
-          Download Resource Pack
+      <div class="container">
+        <button
+          class="reset-button"
+          onclick="resetForm()"
+          title="Reset all fields"
+        >
+          <svg
+            class="svg-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ff342b"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span class="lable">Reset</span>
         </button>
+
+        <h1>Skin to Totem</h1>
+
+        <div class="main-grid">
+          <div class="input-section">
+            <label class="drop-zone-mini" id="drop-skin">
+              <div
+                class="initial-content"
+                style="display: flex; align-items: center; gap: 12px"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                  />
+                </svg>
+                <div class="drop-zone-text">
+                  <h4>Drag Skin Image</h4>
+                  <p>Or click to upload</p>
+                </div>
+              </div>
+              <div class="preview-media-small"></div>
+              <input type="file" id="skin-file-input" accept="image/*" />
+            </label>
+
+            <div class="or-divider"><span>OR</span></div>
+
+            <div class="skin-input-group">
+              <input
+                type="text"
+                id="username-input"
+                class="text-input"
+                placeholder="Username"
+              />
+              <button class="btn-fetch" onclick="fetchSkin()">Load</button>
+            </div>
+
+            <label class="style-label">Style</label>
+            <div class="pure-dropdown-container" id="style-dropdown">
+              <input
+                class="hidden-check dropdown"
+                type="checkbox"
+                id="dropdown-style"
+                name="dropdown-style"
+              />
+              <label class="for-dropdown" for="dropdown-style">
+                <div style="display: flex; align-items: center">
+                  <img
+                    src="img/steve-tiny-preview.png"
+                    id="selected-style-icon"
+                    class="style-preview-icon"
+                    alt="icon"
+                  />
+                  <div>
+                    <div id="selected-style-title" style="line-height: 1">
+                      Mini me
+                    </div>
+                    <div
+                      id="selected-style-desc"
+                      style="
+                        font-size: 0.75rem;
+                        color: var(--text-muted);
+                        margin-top: 2px;
+                      "
+                    >
+                      A mini version of your skin!
+                    </div>
+                  </div>
+                </div>
+                <i class="uil uil-angle-down"></i>
+              </label>
+              <div class="section-dropdown">
+                <a href="javascript:void(0)" onclick="selectStyle('mini')">
+                  <img
+                    src="img/steve-tiny-preview.png"
+                    class="style-preview-icon"
+                    alt="mini"
+                  />
+                  <div>
+                    <div style="line-height: 1">Mini me</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted)">
+                      A mini version of your skin!
+                    </div>
+                  </div>
+                </a>
+                <a href="javascript:void(0)" onclick="selectStyle('full')">
+                  <img
+                    src="img/steve-big-preview.png"
+                    class="style-preview-icon"
+                    alt="full"
+                  />
+                  <div>
+                    <div style="line-height: 1">Full body</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted)">
+                      A full version of your skin!
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label class="checkbox-wrapper" for="outer-layer-check">
+                <input
+                  type="checkbox"
+                  id="outer-layer-check"
+                  class="checkbox-input"
+                  checked
+                  onchange="fetchSkinIfUsername()"
+                />
+                <div class="checkbox-visual">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="checkbox-label-content">
+                  <span class="checkbox-main-text">Outer Layer</span
+                  ><span class="checkbox-subtext"
+                    >Include hat and jacket layers</span
+                  >
+                </div>
+              </label>
+
+              <label
+                class="checkbox-wrapper"
+                id="hd-layer-wrapper"
+                for="hd-layer-check"
+              >
+                <input
+                  type="checkbox"
+                  id="hd-layer-check"
+                  class="checkbox-input"
+                  onchange="fetchSkinIfUsername()"
+                />
+                <div class="checkbox-visual">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="checkbox-label-content">
+                  <span class="checkbox-main-text">HD Totem</span
+                  ><span class="checkbox-subtext"
+                    >Use highly detailed 32x32 resolution</span
+                  >
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="main-preview-area" id="skin-preview">
+            <img
+              src="img/steve-tiny-preview.png"
+              id="main-preview-img"
+              alt="Preview"
+            />
+          </div>
+        </div>
+
+        <div class="bottom-section">
+          <div>
+            <label class="style-label">Target Version</label>
+            <div class="pure-dropdown-container">
+              <input
+                class="hidden-check dropdown"
+                type="checkbox"
+                id="dropdown-version"
+                name="dropdown-version"
+              />
+              <label
+                class="for-dropdown"
+                for="dropdown-version"
+                id="version-dropdown-label"
+              >
+                <span id="version-label-text">Select Minecraft Version...</span>
+                <i class="uil uil-angle-down"></i>
+              </label>
+              <div class="section-dropdown" id="version-select-box">
+                <input
+                  class="hidden-check dropdown-sub"
+                  type="checkbox"
+                  id="v1-21"
+                  name="v1-21"
+                />
+                <label class="for-dropdown-sub" for="v1-21"
+                  >1.21 (Tricky Trials) <i class="uil uil-plus"></i
+                ></label>
+                <div class="section-dropdown-sub">
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('46', '1.21.4')"
+                    >1.21.4</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('42', '1.21.2 - 1.21.3')"
+                    >1.21.2 - 1.21.3</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('34', '1.21 - 1.21.1')"
+                    >1.21 - 1.21.1</a
+                  >
+                </div>
+
+                <input
+                  class="hidden-check dropdown-sub"
+                  type="checkbox"
+                  id="v1-20"
+                  name="v1-20"
+                />
+                <label class="for-dropdown-sub" for="v1-20"
+                  >1.20 (Trails & Tales) <i class="uil uil-plus"></i
+                ></label>
+                <div class="section-dropdown-sub">
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('32', '1.20.5 - 1.20.6')"
+                    >1.20.5 - 1.20.6</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('22', '1.20.3 - 1.20.4')"
+                    >1.20.3 - 1.20.4</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('18', '1.20.2')"
+                    >1.20.2</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('15', '1.20 - 1.20.1')"
+                    >1.20 - 1.20.1</a
+                  >
+                </div>
+
+                <input
+                  class="hidden-check dropdown-sub"
+                  type="checkbox"
+                  id="v1-19"
+                  name="v1-19"
+                />
+                <label class="for-dropdown-sub" for="v1-19"
+                  >1.19 (The Wild Update) <i class="uil uil-plus"></i
+                ></label>
+                <div class="section-dropdown-sub">
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('13', '1.19.4')"
+                    >1.19.4</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('12', '1.19.3')"
+                    >1.19.3</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="selectVersion('9', '1.19 - 1.19.2')"
+                    >1.19 - 1.19.2</a
+                  >
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="version-select" value="" />
+          </div>
+
+          <input class="hidden-check" type="checkbox" id="advanced-toggle" />
+          <div class="advanced-settings-container">
+            <label class="advanced-toggle-label" for="advanced-toggle">
+              Extra Settings <i class="uil uil-plus"></i>
+            </label>
+            <div class="advanced-content-wrapper">
+              <div class="advanced-content-inner">
+                <div class="settings-content">
+                  <div style="grid-column: span 2; display: flex; gap: 15px">
+                    <div
+                      id="sym-arms-wrapper"
+                      style="flex: 1; transition: opacity 0.3s ease"
+                    >
+                      <label class="style-label" style="font-size: 0.85rem"
+                        >Symmetrical Arms (Mini)</label
+                      >
+                      <div class="pure-dropdown-container">
+                        <input
+                          class="hidden-check dropdown"
+                          type="checkbox"
+                          id="dropdown-sym-arms"
+                          name="dropdown-sym-arms"
+                        />
+                        <label
+                          class="for-dropdown"
+                          for="dropdown-sym-arms"
+                          style="padding: 10px 14px; font-size: 0.9rem"
+                        >
+                          <span id="sym-arms-label">Off</span>
+                          <i class="uil uil-angle-down"></i>
+                        </label>
+                        <div class="section-dropdown">
+                          <a
+                            href="javascript:void(0)"
+                            onclick="selectSymmetry('arms', 'none', 'Off')"
+                            >Off</a
+                          >
+                          <a
+                            href="javascript:void(0)"
+                            onclick="
+                              selectSymmetry(
+                                'arms',
+                                'right-to-left',
+                                'Reflect Right (to Left)',
+                              )
+                            "
+                            >Reflect Right (to Left)</a
+                          >
+                          <a
+                            href="javascript:void(0)"
+                            onclick="
+                              selectSymmetry(
+                                'arms',
+                                'left-to-right',
+                                'Reflect Left (to Right)',
+                              )
+                            "
+                            >Reflect Left (to Right)</a
+                          >
+                        </div>
+                      </div>
+                      <input type="hidden" id="sym-arms" value="none" />
+                    </div>
+
+                    <div
+                      id="sym-legs-wrapper"
+                      style="flex: 1; transition: opacity 0.3s ease"
+                    >
+                      <label class="style-label" style="font-size: 0.85rem"
+                        >Symmetrical Legs (Mini)</label
+                      >
+                      <div class="pure-dropdown-container">
+                        <input
+                          class="hidden-check dropdown"
+                          type="checkbox"
+                          id="dropdown-sym-legs"
+                          name="dropdown-sym-legs"
+                        />
+                        <label
+                          class="for-dropdown"
+                          for="dropdown-sym-legs"
+                          style="padding: 10px 14px; font-size: 0.9rem"
+                        >
+                          <span id="sym-legs-label">Off</span>
+                          <i class="uil uil-angle-down"></i>
+                        </label>
+                        <div class="section-dropdown">
+                          <a
+                            href="javascript:void(0)"
+                            onclick="selectSymmetry('legs', 'none', 'Off')"
+                            >Off</a
+                          >
+                          <a
+                            href="javascript:void(0)"
+                            onclick="
+                              selectSymmetry(
+                                'legs',
+                                'right-to-left',
+                                'Reflect Right (to Left)',
+                              )
+                            "
+                            >Reflect Right (to Left)</a
+                          >
+                          <a
+                            href="javascript:void(0)"
+                            onclick="
+                              selectSymmetry(
+                                'legs',
+                                'left-to-right',
+                                'Reflect Left (to Right)',
+                              )
+                            "
+                            >Reflect Left (to Right)</a
+                          >
+                        </div>
+                      </div>
+                      <input type="hidden" id="sym-legs" value="none" />
+                    </div>
+                  </div>
+
+                  <label class="drop-zone-extra" id="drop-ogg">
+                    <div
+                      class="initial-content"
+                      style="display: flex; align-items: center; gap: 10px"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"
+                        />
+                      </svg>
+                      <span style="color: var(--text-muted); font-weight: 600"
+                        >Sound</span
+                      >
+                    </div>
+                    <div class="preview-media-small"></div>
+                    <input type="file" id="sound" accept="audio/*" />
+                  </label>
+
+                  <label class="drop-zone-extra" id="drop-icon">
+                    <div
+                      class="initial-content"
+                      style="display: flex; align-items: center; gap: 10px"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                        />
+                      </svg>
+                      <span style="color: var(--text-muted); font-weight: 600"
+                        >Pack Icon</span
+                      >
+                    </div>
+                    <div class="preview-media-small"></div>
+                    <input
+                      type="file"
+                      id="pack-icon-input"
+                      accept="image/png"
+                    />
+                  </label>
+
+                  <div style="grid-column: span 2">
+                    <input
+                      type="text"
+                      id="pack-name"
+                      class="text-input"
+                      placeholder="Custom Totem Pack"
+                      title="Hint: Enter a unique name for your resource pack to identify it easily in Minecraft!"
+                    />
+                  </div>
+                  <div style="grid-column: span 2">
+                    <input
+                      type="text"
+                      id="pack-desc"
+                      class="text-input"
+                      placeholder="Pack Description"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-download" onclick="generatePack()">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+            </svg>
+            Download Resource Pack
+          </button>
+        </div>
       </div>
     </div>
+    <script>
+      function showToast(message, type = "error") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
 
-  </div> <script>
-    function showToast(message, type = "error") {
-      const container = document.getElementById("toast-container");
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      
-      let svgPath = type === "error" ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
-      if(type === "info") svgPath = "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z";
-      
-      toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${svgPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
-      container.appendChild(toast);
-      
-      setTimeout(() => { 
-        toast.style.animation = "slideOut 0.4s ease forwards"; 
-        toast.addEventListener("animationend", () => toast.remove()); 
-      }, 4000);
-    }
+        let svgPath =
+          type === "error"
+            ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
+        if (type === "info")
+          svgPath =
+            "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z";
 
-    const DEFAULTS = { sound: "./sound_totem.ogg", icon: "./pack.png" };
+        toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${svgPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
+        container.appendChild(toast);
 
-    let originalSkinImage = null; 
-    let currentSkinBlob = null; 
-    let selectedStyle = "mini";
+        setTimeout(() => {
+          toast.style.animation = "slideOut 0.4s ease forwards";
+          toast.addEventListener("animationend", () => toast.remove());
+        }, 4000);
+      }
 
-    // --- DROPDOWN ACCORDION & POSITION LOGIC ---
-    function closeOtherDropdowns(current, selector) {
-      document.querySelectorAll(selector).forEach(cb => {
-        if (cb !== current) {
+      const DEFAULTS = { sound: "img/sound_totem.ogg", icon: "img/pack.png" };
+
+      let originalSkinImage = null;
+      let currentSkinBlob = null;
+      let selectedStyle = "mini";
+
+      // dropdown accordion config
+      function closeOtherDropdowns(current, selector) {
+        document.querySelectorAll(selector).forEach((cb) => {
+          if (cb !== current) {
+            cb.checked = false;
+            cb.classList.remove("drop-up-active");
+            const menu = cb
+              .closest(".pure-dropdown-container")
+              ?.querySelector(".section-dropdown");
+            if (menu) menu.classList.remove("drop-up");
+          }
+        });
+      }
+
+      function calculateDropdownPosition(cb) {
+        const container = cb.closest(".pure-dropdown-container");
+        const menu = container.querySelector(".section-dropdown");
+        const trigger = container.querySelector(".for-dropdown");
+        if (!menu || !trigger) return;
+
+        menu.classList.remove("drop-up");
+        cb.classList.remove("drop-up-active");
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const menuHeight = Math.max(menu.scrollHeight, 250);
+
+        // flip upwards if no space on screen
+        if (triggerRect.bottom + menuHeight > window.innerHeight - 20) {
+          menu.classList.add("drop-up");
+          cb.classList.add("drop-up-active");
+        }
+      }
+
+      function closeAllDropdowns() {
+        document.querySelectorAll(".dropdown, .dropdown-sub").forEach((cb) => {
           cb.checked = false;
-          cb.classList.remove('drop-up-active');
-          const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
-          if (menu) menu.classList.remove('drop-up');
+          cb.classList.remove("drop-up-active");
+          const menu = cb
+            .closest(".pure-dropdown-container")
+            ?.querySelector(".section-dropdown");
+          if (menu) menu.classList.remove("drop-up");
+        });
+      }
+
+      function selectVersion(val, text) {
+        document.getElementById("version-select").value = val;
+        document.getElementById("version-label-text").textContent = text;
+        document
+          .getElementById("version-dropdown-label")
+          .classList.remove("input-error");
+        closeAllDropdowns();
+      }
+
+      function selectSymmetry(type, val, text) {
+        document.getElementById(`sym-${type}`).value = val;
+        document.getElementById(`sym-${type}-label`).textContent = text;
+        closeAllDropdowns();
+        if (selectedStyle === "mini") renderTotem();
+      }
+
+      function selectStyle(style) {
+        selectedStyle = style;
+        closeAllDropdowns();
+
+        const icon = document.getElementById("selected-style-icon");
+        const title = document.getElementById("selected-style-title");
+        const desc = document.getElementById("selected-style-desc");
+
+        const hdCheck = document.getElementById("hd-layer-check");
+        const hdWrapper = document.getElementById("hd-layer-wrapper");
+
+        const symArmsSelect = document.getElementById("dropdown-sym-arms");
+        const symLegsSelect = document.getElementById("dropdown-sym-legs");
+        const symArmsWrapper = document.getElementById("sym-arms-wrapper");
+        const symLegsWrapper = document.getElementById("sym-legs-wrapper");
+
+        if (style === "mini") {
+          icon.src = "img/steve-tiny-preview.png";
+          title.textContent = "Mini me";
+          desc.textContent = "A mini version of your skin!";
+
+          hdCheck.disabled = false;
+          hdWrapper.style.opacity = "1";
+          hdWrapper.style.cursor = "pointer";
+          symArmsSelect.disabled = false;
+          symLegsSelect.disabled = false;
+          symArmsWrapper.style.opacity = "1";
+          symLegsWrapper.style.opacity = "1";
+          symArmsWrapper.style.pointerEvents = "auto";
+          symLegsWrapper.style.pointerEvents = "auto";
+        } else {
+          icon.src = "img/steve-big-preview.png";
+          title.textContent = "Full body";
+          desc.textContent = "A full version of your skin!";
+
+          hdCheck.checked = true;
+          hdCheck.disabled = true;
+          hdWrapper.style.opacity = "0.5";
+          hdWrapper.style.cursor = "not-allowed";
+          symArmsSelect.disabled = true;
+          symLegsSelect.disabled = true;
+          symArmsWrapper.style.opacity = "0.5";
+          symLegsWrapper.style.opacity = "0.5";
+          symArmsWrapper.style.pointerEvents = "none";
+          symLegsWrapper.style.pointerEvents = "none";
         }
-      });
-    }
 
-    function calculateDropdownPosition(cb) {
-      const container = cb.closest('.pure-dropdown-container');
-      const menu = container.querySelector('.section-dropdown');
-      const trigger = container.querySelector('.for-dropdown');
-      if (!menu || !trigger) return;
-
-      menu.classList.remove('drop-up');
-      cb.classList.remove('drop-up-active');
-
-      const triggerRect = trigger.getBoundingClientRect();
-      const menuHeight = Math.max(menu.scrollHeight, 250); 
-
-      if (triggerRect.bottom + menuHeight > window.innerHeight - 20) {
-        menu.classList.add('drop-up');
-        cb.classList.add('drop-up-active');
-      }
-    }
-
-    function closeAllDropdowns() {
-      document.querySelectorAll('.dropdown, .dropdown-sub').forEach(cb => {
-        cb.checked = false;
-        cb.classList.remove('drop-up-active');
-        const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
-        if (menu) menu.classList.remove('drop-up');
-      });
-    }
-
-    function selectVersion(val, text) {
-      document.getElementById('version-select').value = val;
-      document.getElementById('version-label-text').textContent = text;
-      document.getElementById('version-dropdown-label').classList.remove("input-error");
-      closeAllDropdowns();
-    }
-
-    function selectSymmetry(type, val, text) {
-      document.getElementById(`sym-${type}`).value = val;
-      document.getElementById(`sym-${type}-label`).textContent = text;
-      closeAllDropdowns();
-      if (selectedStyle === 'mini') renderTotem();
-    }
-
-    function selectStyle(style) {
-      selectedStyle = style;
-      closeAllDropdowns();
-
-      const icon = document.getElementById("selected-style-icon");
-      const title = document.getElementById("selected-style-title");
-      const desc = document.getElementById("selected-style-desc");
-      
-      const hdCheck = document.getElementById("hd-layer-check");
-      const hdWrapper = document.getElementById("hd-layer-wrapper");
-      
-      const symArmsSelect = document.getElementById("dropdown-sym-arms");
-      const symLegsSelect = document.getElementById("dropdown-sym-legs");
-      const symArmsWrapper = document.getElementById("sym-arms-wrapper");
-      const symLegsWrapper = document.getElementById("sym-legs-wrapper");
-
-      if (style === "mini") {
-        icon.src = "img/steve-tiny-preview.png";
-        title.textContent = "Mini me";
-        desc.textContent = "A mini version of your skin!";
-        
-        hdCheck.disabled = false; hdWrapper.style.opacity = "1"; hdWrapper.style.cursor = "pointer";
-        symArmsSelect.disabled = false; symLegsSelect.disabled = false;
-        symArmsWrapper.style.opacity = "1"; symLegsWrapper.style.opacity = "1"; symArmsWrapper.style.pointerEvents = "auto"; symLegsWrapper.style.pointerEvents = "auto";
-
-      } else {
-        icon.src = "img/steve-big-preview.png";
-        title.textContent = "Full body";
-        desc.textContent = "A full version of your skin!";
-        
-        hdCheck.checked = true; hdCheck.disabled = true; hdWrapper.style.opacity = "0.5"; hdWrapper.style.cursor = "not-allowed";
-        symArmsSelect.disabled = true; symLegsSelect.disabled = true;
-        symArmsWrapper.style.opacity = "0.5"; symLegsWrapper.style.opacity = "0.5"; symArmsWrapper.style.pointerEvents = "none"; symLegsWrapper.style.pointerEvents = "none";
+        const username = document.getElementById("username-input").value.trim();
+        if (username) fetchSkin(true);
+        else if (originalSkinImage && style === "mini") renderTotem();
+        else if (currentSkinBlob && style === "full")
+          updateMainPreview(currentSkinBlob);
+        else {
+          const img = document.getElementById("main-preview-img");
+          if (img)
+            img.src =
+              style === "mini"
+                ? "img/steve-tiny-preview.png"
+                : "img/steve-big-preview.png";
+        }
       }
 
-      const username = document.getElementById("username-input").value.trim();
-      if (username) fetchSkin(true);
-      else if (originalSkinImage && style === "mini") renderTotem();
-      else if (currentSkinBlob && style === "full") updateMainPreview(currentSkinBlob);
-      else {
-        const img = document.getElementById("main-preview-img");
-        if (img) img.src = style === "mini" ? "img/steve-tiny-preview.png" : "img/steve-big-preview.png";
-      }
-    }
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          document.getElementById("loading-screen").classList.add("fadeOut");
+          setTimeout(
+            () =>
+              (document.getElementById("loading-screen").style.display =
+                "none"),
+            800,
+          );
+        }, 800);
 
-    // --- Init & Listeners ---
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        document.getElementById("loading-screen").classList.add("fadeOut");
-        setTimeout(() => (document.getElementById("loading-screen").style.display = "none"), 800);
-      }, 800);
-      
-      document.getElementById("username-input").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") fetchSkin();
-      });
+        document
+          .getElementById("username-input")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") fetchSkin();
+          });
 
-      document.querySelectorAll('.dropdown').forEach(cb => {
-        cb.addEventListener('change', function() {
-          if (this.checked) {
-            closeOtherDropdowns(this, '.dropdown');
-            calculateDropdownPosition(this); 
-          } else {
-            this.classList.remove('drop-up-active');
-            const menu = this.parentElement.querySelector('.section-dropdown');
-            if (menu) menu.classList.remove('drop-up');
-            const subs = this.parentElement.querySelectorAll('.dropdown-sub');
-            subs.forEach(sub => sub.checked = false);
-          }
+        document.querySelectorAll(".dropdown").forEach((cb) => {
+          cb.addEventListener("change", function () {
+            if (this.checked) {
+              closeOtherDropdowns(this, ".dropdown");
+              calculateDropdownPosition(this);
+            } else {
+              this.classList.remove("drop-up-active");
+              const menu =
+                this.parentElement.querySelector(".section-dropdown");
+              if (menu) menu.classList.remove("drop-up");
+              const subs = this.parentElement.querySelectorAll(".dropdown-sub");
+              subs.forEach((sub) => (sub.checked = false));
+            }
+          });
+        });
+
+        document.querySelectorAll(".dropdown-sub").forEach((cb) => {
+          cb.addEventListener("change", function () {
+            if (this.checked) closeOtherDropdowns(this, ".dropdown-sub");
+          });
+        });
+
+        window.addEventListener("resize", () => {
+          document
+            .querySelectorAll(".dropdown:checked")
+            .forEach((cb) => calculateDropdownPosition(cb));
+        });
+
+        document.addEventListener("click", function (e) {
+          if (!e.target.closest(".pure-dropdown-container"))
+            closeAllDropdowns();
         });
       });
 
-      document.querySelectorAll('.dropdown-sub').forEach(cb => {
-        cb.addEventListener('change', function() {
-          if (this.checked) closeOtherDropdowns(this, '.dropdown-sub');
+      // handles drag and drop interactions
+      function initDropZone(zoneId, inputId) {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(inputId);
+        const isExtra = zone.classList.contains("drop-zone-extra");
+        const preview = zone.querySelector(
+          isExtra ? ".preview-media-small" : ".preview-media",
+        );
+        const initial = zone.querySelector(".initial-content");
+
+        let dragCounter = 0;
+        let isErrorActive = false;
+
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
+          zone.addEventListener(
+            eventName,
+            (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            false,
+          ),
+        );
+
+        zone.addEventListener("dragenter", () => {
+          dragCounter++;
+          if (!isErrorActive) zone.classList.add("dragover");
         });
-      });
+        zone.addEventListener("dragleave", () => {
+          dragCounter--;
+          if (dragCounter <= 0) {
+            dragCounter = 0;
+            zone.classList.remove("dragover");
+          }
+        });
 
-      window.addEventListener('resize', () => {
-        document.querySelectorAll('.dropdown:checked').forEach(cb => calculateDropdownPosition(cb));
-      });
+        zone.addEventListener("drop", (e) => {
+          dragCounter = 0;
+          zone.classList.remove("dragover");
+          if (e.dataTransfer.files.length) {
+            input.files = e.dataTransfer.files;
+            handleFiles(e.dataTransfer.files);
+          }
+        });
 
-      document.addEventListener("click", function (e) {
-        if (!e.target.closest('.pure-dropdown-container')) closeAllDropdowns();
-      });
-    });
+        input.addEventListener("change", (e) => handleFiles(e.target.files));
 
-    // --- Drag & Drop ---
-    function initDropZone(zoneId, inputId) {
-      const zone = document.getElementById(zoneId);
-      const input = document.getElementById(inputId);
-      const isExtra = zone.classList.contains("drop-zone-extra");
-      const preview = zone.querySelector(isExtra ? ".preview-media-small" : ".preview-media");
-      const initial = zone.querySelector(".initial-content");
+        function triggerError(msg) {
+          isErrorActive = true;
+          zone.classList.remove("dragover");
+          zone.classList.add("input-error", "shake");
+          input.value = "";
+          showToast(msg, "error");
+          setTimeout(() => zone.classList.remove("shake"), 500);
+          setTimeout(() => {
+            zone.classList.remove("input-error");
+            isErrorActive = false;
+          }, 2000);
+        }
 
-      let dragCounter = 0;
-      let isErrorActive = false;
+        function handleFiles(files) {
+          if (!files.length) return;
+          const file = files[0];
 
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false));
+          if (file.size > 10 * 1024 * 1024)
+            return triggerError("File is too big! Max 10MB.");
 
-      zone.addEventListener('dragenter', () => { dragCounter++; if (!isErrorActive) zone.classList.add('dragover'); });
-      zone.addEventListener('dragleave', () => { dragCounter--; if (dragCounter <= 0) { dragCounter = 0; zone.classList.remove('dragover'); }});
+          const isImg =
+            inputId === "image" ||
+            inputId === "skin-file-input" ||
+            inputId === "pack-icon-input";
+          if (isImg && !file.type.startsWith("image/"))
+            return triggerError("Please upload an image file!");
+          if (!isImg && !file.type.startsWith("audio/"))
+            return triggerError("Please upload an audio file!");
 
-      zone.addEventListener('drop', (e) => {
-        dragCounter = 0; zone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; handleFiles(e.dataTransfer.files); }
-      });
+          zone.classList.remove("input-error");
 
-      input.addEventListener("change", (e) => handleFiles(e.target.files));
+          if (inputId === "skin-file-input") {
+            document.getElementById("username-input").value = "";
+            if (selectedStyle === "mini") {
+              const img = new Image();
+              img.onload = () => {
+                originalSkinImage = img;
+                renderTotem();
+              };
+              img.src = URL.createObjectURL(file);
+            } else {
+              currentSkinBlob = file;
+              updateMainPreview(file);
+            }
 
-      function triggerError(msg) {
-        isErrorActive = true; zone.classList.remove('dragover'); zone.classList.add("input-error", "shake");
-        input.value = ""; showToast(msg, "error");
-        setTimeout(() => zone.classList.remove("shake"), 500);
-        setTimeout(() => { zone.classList.remove("input-error"); isErrorActive = false; }, 2000);
-      }
-
-      function handleFiles(files) {
-        if (!files.length) return;
-        const file = files[0];
-
-        if (file.size > 10 * 1024 * 1024) return triggerError("File is too big! Max 10MB.");
-
-        const isImg = inputId === "skin-file-input" || inputId === "pack-icon-input";
-        if (isImg && !file.type.startsWith("image/")) return triggerError("Please upload an image file!");
-        if (!isImg && !file.type.startsWith("audio/")) return triggerError("Please upload an audio file!");
-
-        zone.classList.remove("input-error");
-
-        if (inputId === "skin-file-input") {
-          document.getElementById("username-input").value = "";
-          if (selectedStyle === "mini") {
-            const img = new Image();
-            img.onload = () => { originalSkinImage = img; renderTotem(); };
-            img.src = URL.createObjectURL(file);
+            initial.style.display = "none";
+            if (preview) {
+              preview.style.display = "flex";
+              preview.innerHTML = "";
+              const prevImg = document.createElement("img");
+              prevImg.src = URL.createObjectURL(file);
+              const info = document.createElement("div");
+              info.className = "file-name-small";
+              info.textContent = file.name;
+              preview.appendChild(prevImg);
+              preview.appendChild(info);
+            }
           } else {
-            currentSkinBlob = file; updateMainPreview(file);
+            initial.style.display = "none";
+            preview.style.display = "flex";
+            preview.innerHTML = "";
+
+            if (inputId === "sound") {
+              const el = document.createElement("audio");
+              el.src = URL.createObjectURL(file);
+              el.controls = true;
+              preview.appendChild(el);
+            } else if (isExtra && isImg) {
+              const el = document.createElement("img");
+              el.src = URL.createObjectURL(file);
+              preview.appendChild(el);
+            }
+
+            const name = document.createElement("div");
+            name.className = isExtra ? "file-name-small" : "";
+            if (!isExtra) {
+              name.style.marginTop = "8px";
+              name.style.fontSize = "0.8rem";
+              name.style.color = "var(--text-main)";
+            }
+            name.textContent = file.name;
+            preview.appendChild(name);
           }
-
-          initial.style.display = "none";
-          if (preview) {
-            preview.style.display = "flex"; preview.innerHTML = "";
-            const prevImg = document.createElement("img"); prevImg.src = URL.createObjectURL(file);
-            const info = document.createElement("div"); info.className = "file-name-small"; info.textContent = file.name;
-            preview.appendChild(prevImg); preview.appendChild(info);
-          }
-        } else {
-          initial.style.display = "none"; preview.style.display = "flex"; preview.innerHTML = "";
-          
-          if (inputId === "sound") {
-            const el = document.createElement("audio"); el.src = URL.createObjectURL(file); el.controls = true; preview.appendChild(el);
-          } else if (isExtra && isImg) {
-            const el = document.createElement("img"); el.src = URL.createObjectURL(file); preview.appendChild(el);
-          }
-          
-          const name = document.createElement("div"); name.className = isExtra ? "file-name-small" : "";
-          if (!isExtra) { name.style.marginTop = "8px"; name.style.fontSize = "0.8rem"; name.style.color = "var(--text-main)"; }
-          name.textContent = file.name; preview.appendChild(name);
-        }
-      }
-    }
-
-    initDropZone("drop-skin", "skin-file-input");
-    initDropZone("drop-ogg", "sound");
-    initDropZone("drop-icon", "pack-icon-input");
-
-    function updateMainPreview(blob) {
-      const box = document.getElementById("skin-preview");
-      box.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(blob);
-      img.id = "main-preview-img";
-      box.appendChild(img);
-    }
-
-    function renderTotem() {
-      if (!originalSkinImage || selectedStyle !== "mini") return;
-
-      const canvas = document.createElement("canvas");
-      const isHD = document.getElementById("hd-layer-check").checked;
-      const scale = isHD ? 2 : 1; 
-
-      canvas.width = 16 * scale;
-      canvas.height = 16 * scale;
-      
-      const ctx = canvas.getContext("2d");
-      ctx.imageSmoothingEnabled = false;
-
-      const drawOuter = document.getElementById("outer-layer-check").checked;
-      const isOldSkin = originalSkinImage.height === 32;
-
-      function drawPart(srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, flipX = false) {
-        dstX *= scale; dstY *= scale; dstW *= scale; dstH *= scale;
-        if (flipX) {
-          ctx.save(); ctx.scale(-1, 1);
-          ctx.drawImage(originalSkinImage, srcX, srcY, srcW, srcH, -dstX - dstW, dstY, dstW, dstH);
-          ctx.restore();
-        } else {
-          ctx.drawImage(originalSkinImage, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH);
         }
       }
 
-      drawPart(8, 8, 8, 8, 4, 0, 8, 8);
-      if (drawOuter) drawPart(40, 8, 8, 8, 4, 0, 8, 8);
-      drawPart(20, 20, 8, 12, 4, 8, 8, 6);
-      if (drawOuter && !isOldSkin) drawPart(20, 36, 8, 12, 4, 8, 8, 6);
+      initDropZone("drop-skin", "skin-file-input");
+      initDropZone("drop-ogg", "sound");
+      initDropZone("drop-icon", "pack-icon-input");
 
-      function _drawArm(isRightSource, isRightDest) {
-          if (isOldSkin && !isRightSource) isRightSource = true; 
-          const flip = (isRightSource !== isRightDest);
+      function updateMainPreview(blob) {
+        const box = document.getElementById("skin-preview");
+        box.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(blob);
+        img.id = "main-preview-img";
+        box.appendChild(img);
+      }
+
+      function renderTotem() {
+        if (!originalSkinImage || selectedStyle !== "mini") return;
+
+        const canvas = document.createElement("canvas");
+        const isHD = document.getElementById("hd-layer-check").checked;
+        const scale = isHD ? 2 : 1;
+
+        canvas.width = 16 * scale;
+        canvas.height = 16 * scale;
+
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+
+        const drawOuter = document.getElementById("outer-layer-check").checked;
+        const isOldSkin = originalSkinImage.height === 32;
+
+        function drawPart(
+          srcX,
+          srcY,
+          srcW,
+          srcH,
+          dstX,
+          dstY,
+          dstW,
+          dstH,
+          flipX = false,
+        ) {
+          dstX *= scale;
+          dstY *= scale;
+          dstW *= scale;
+          dstH *= scale;
+          if (flipX) {
+            ctx.save();
+            ctx.scale(-1, 1);
+            ctx.drawImage(
+              originalSkinImage,
+              srcX,
+              srcY,
+              srcW,
+              srcH,
+              -dstX - dstW,
+              dstY,
+              dstW,
+              dstH,
+            );
+            ctx.restore();
+          } else {
+            ctx.drawImage(
+              originalSkinImage,
+              srcX,
+              srcY,
+              srcW,
+              srcH,
+              dstX,
+              dstY,
+              dstW,
+              dstH,
+            );
+          }
+        }
+
+        drawPart(8, 8, 8, 8, 4, 0, 8, 8);
+        if (drawOuter) drawPart(40, 8, 8, 8, 4, 0, 8, 8);
+        drawPart(20, 20, 8, 12, 4, 8, 8, 6);
+        if (drawOuter && !isOldSkin) drawPart(20, 36, 8, 12, 4, 8, 8, 6);
+
+        function _drawArm(isRightSource, isRightDest) {
+          if (isOldSkin && !isRightSource) isRightSource = true;
+          const flip = isRightSource !== isRightDest;
           const dX_shoulder = isRightDest ? 12 : 1;
           const dX_main = isRightDest ? 12 : 1;
           const dX_palm = isRightDest ? 12 : 2;
@@ -566,212 +1018,343 @@
 
           const srcX = isRightSource ? 44 : 36;
           const srcY = isRightSource ? 20 : 52;
-          const outX = isRightSource ? 44 : 52; 
-          const outY = isRightSource ? 36 : 52; 
+          const outX = isRightSource ? 44 : 52;
+          const outY = isRightSource ? 36 : 52;
 
           drawPart(srcX, srcY, 4, 1, dX_shoulder, 7, 3, 1, flip);
-          if (drawOuter && !isOldSkin) drawPart(outX, outY - 1, 4, 2, dX_shoulder, 7, 3, 1, flip);
+          if (drawOuter && !isOldSkin)
+            drawPart(outX, outY - 1, 4, 2, dX_shoulder, 7, 3, 1, flip);
           drawPart(srcX, srcY + 1, 4, 10, dX_main, 8, 3, 2, flip);
-          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 10, dX_main, 8, 3, 2, flip);
+          if (drawOuter && !isOldSkin)
+            drawPart(outX, outY, 4, 10, dX_main, 8, 3, 2, flip);
           drawPart(srcX, srcY + 11, 4, 1, dX_palm, 10, 2, 1, flip);
-          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX_main, 8, 3, 2, flip);
+          if (drawOuter && !isOldSkin)
+            drawPart(outX, outY, 4, 12, dX_main, 8, 3, 2, flip);
           drawPart(srcX, srcY + 11, 4, 1, dX_pixel, 9, 1, 1, flip);
-          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX_pixel, 9, 1, 1, flip);
-      }
+          if (drawOuter && !isOldSkin)
+            drawPart(outX, outY, 4, 12, dX_pixel, 9, 1, 1, flip);
+        }
 
-      function _drawLeg(isRightSource, isRightDest) {
+        function _drawLeg(isRightSource, isRightDest) {
           if (isOldSkin && !isRightSource) isRightSource = true;
-          const flip = (isRightSource !== isRightDest);
+          const flip = isRightSource !== isRightDest;
           const dX = isRightDest ? 8 : 5;
-          
+
           const srcX = isRightSource ? 4 : 20;
           const srcY = isRightSource ? 20 : 52;
           const outX = isRightSource ? 4 : 4;
           const outY = isRightSource ? 36 : 52;
 
           drawPart(srcX, srcY, 4, 12, dX, 14, 3, 2, flip);
-          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX, 14, 3, 2, flip);
+          if (drawOuter && !isOldSkin)
+            drawPart(outX, outY, 4, 12, dX, 14, 3, 2, flip);
+        }
+
+        const symArms = document.getElementById("sym-arms").value;
+        const symLegs = document.getElementById("sym-legs").value;
+
+        if (symArms === "right-to-left") {
+          _drawArm(true, true);
+          _drawArm(true, false);
+        } else if (symArms === "left-to-right") {
+          _drawArm(false, true);
+          _drawArm(false, false);
+        } else {
+          _drawArm(true, true);
+          _drawArm(false, false);
+        }
+
+        if (symLegs === "right-to-left") {
+          _drawLeg(true, true);
+          _drawLeg(true, false);
+        } else if (symLegs === "left-to-right") {
+          _drawLeg(false, true);
+          _drawLeg(false, false);
+        } else {
+          _drawLeg(true, true);
+          _drawLeg(false, false);
+        }
+
+        function clearCorner(x, y, w, h) {
+          ctx.clearRect(x * scale, y * scale, w * scale, h * scale);
+        }
+        clearCorner(4, 0, 1, 1);
+        clearCorner(11, 0, 1, 1);
+        clearCorner(4, 13, 1, 1);
+        clearCorner(11, 13, 1, 1);
+        clearCorner(5, 15, 1, 1);
+        clearCorner(10, 15, 1, 1);
+
+        canvas.toBlob((blob) => {
+          currentSkinBlob = blob;
+          updateMainPreview(blob);
+        }, "image/png");
       }
 
-      const symArms = document.getElementById("sym-arms").value;
-      const symLegs = document.getElementById("sym-legs").value;
-
-      if (symArms === "right-to-left") { _drawArm(true, true); _drawArm(true, false); } 
-      else if (symArms === "left-to-right") { _drawArm(false, true); _drawArm(false, false); } 
-      else { _drawArm(true, true); _drawArm(false, false); }
-
-      if (symLegs === "right-to-left") { _drawLeg(true, true); _drawLeg(true, false); } 
-      else if (symLegs === "left-to-right") { _drawLeg(false, true); _drawLeg(false, false); } 
-      else { _drawLeg(true, true); _drawLeg(false, false); }
-
-      function clearCorner(x, y, w, h) { ctx.clearRect(x * scale, y * scale, w * scale, h * scale); }
-      clearCorner(4, 0, 1, 1); clearCorner(11, 0, 1, 1); clearCorner(4, 13, 1, 1);
-      clearCorner(11, 13, 1, 1); clearCorner(5, 15, 1, 1); clearCorner(10, 15, 1, 1);
-
-      canvas.toBlob((blob) => { currentSkinBlob = blob; updateMainPreview(blob); }, "image/png");
-    }
-
-    function fetchSkinIfUsername() {
-      const username = document.getElementById("username-input").value.trim();
-      if (selectedStyle === "mini" && originalSkinImage) renderTotem();
-      else if (selectedStyle === "full" && username) fetchSkin(true);
-    }
-
-    function clearFileUI() {
-      document.getElementById("skin-file-input").value = "";
-      const dropInitial = document.querySelector("#drop-skin .initial-content");
-      const dropPreview = document.querySelector("#drop-skin .preview-media-small");
-      if (dropInitial) dropInitial.style.display = "flex";
-      if (dropPreview) { dropPreview.style.display = "none"; dropPreview.innerHTML = ""; }
-    }
-
-    async function convertToOgg(rawFile, onProgress) {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuffer = await rawFile.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      const channel0 = audioBuffer.getChannelData(0);
-      let monoData = channel0;
-      if (audioBuffer.numberOfChannels > 1) {
-        const channel1 = audioBuffer.getChannelData(1);
-        monoData = new Float32Array(channel0.length);
-        for (let i = 0; i < channel0.length; i++) monoData[i] = (channel0[i] + channel1[i]) / 2;
+      function fetchSkinIfUsername() {
+        const username = document.getElementById("username-input").value.trim();
+        if (selectedStyle === "mini" && originalSkinImage) renderTotem();
+        else if (selectedStyle === "full" && username) fetchSkin(true);
       }
-      const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
-      const CHUNK_LEN = audioBuffer.sampleRate * 3;
-      for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
-        encoder.encode([monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length))]);
-        if (onProgress) onProgress(Math.round((Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) * 100));
-        await new Promise(r => setTimeout(r, 5));
-      }
-      return encoder.finish();
-    }
 
-    async function fetchSkin(silent = false) {
-      const username = document.getElementById("username-input").value.trim();
-      const outerLayer = document.getElementById("outer-layer-check").checked;
-      const btn = document.querySelector(".btn-fetch");
-
-      if (!username) { if(!silent) showToast("Enter a username", "error"); return; }
-      btn.disabled = true; btn.textContent = "...";
-
-      if (selectedStyle === "full") {
-        let baseUrl = outerLayer ? "https://minotar.net/armor/body/" : "https://minotar.net/body/";
-        const url = `${baseUrl}${username}/128.png`;
-        try {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error("Err");
-          currentSkinBlob = await res.blob();
-          updateMainPreview(currentSkinBlob);
-          if (!silent) showToast("Skin loaded!", "success");
-          clearFileUI();
-        } catch (err) {
-          if (!silent) showToast("User not found", "error"); currentSkinBlob = null;
-        } finally { btn.disabled = false; btn.textContent = "Load"; }
-      } else {
-        const url = `https://minotar.net/skin/${username}`;
-        try {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error("Err");
-          const blob = await res.blob();
-          const img = new Image();
-          img.crossOrigin = "anonymous";
-          img.onload = () => {
-            try {
-              originalSkinImage = img; renderTotem();
-              if (!silent) showToast("Skin loaded!", "success");
-              clearFileUI();
-            } catch (e) {
-              if (!silent) showToast("Error rendering skin", "error");
-            } finally { btn.disabled = false; btn.textContent = "Load"; }
-          };
-          img.onerror = () => { if (!silent) showToast("Error parsing skin image", "error"); btn.disabled = false; btn.textContent = "Load"; };
-          img.src = URL.createObjectURL(blob);
-        } catch (err) {
-          if (!silent) showToast("User not found", "error");
-          originalSkinImage = null; btn.disabled = false; btn.textContent = "Load";
+      function clearFileUI() {
+        document.getElementById("skin-file-input").value = "";
+        const dropInitial = document.querySelector(
+          "#drop-skin .initial-content",
+        );
+        const dropPreview = document.querySelector(
+          "#drop-skin .preview-media-small",
+        );
+        if (dropInitial) dropInitial.style.display = "flex";
+        if (dropPreview) {
+          dropPreview.style.display = "none";
+          dropPreview.innerHTML = "";
         }
       }
-    }
 
-    async function generatePack() {
-      const version = document.getElementById("version-select").value;
-      if (!version) {
-        document.getElementById("version-dropdown-label").classList.add("input-error");
-        return showToast("Select a version!", "error");
-      }
-      if (!currentSkinBlob) return showToast("Load or upload a skin first!", "error");
-
-      let soundFile = document.getElementById("sound").files[0];
-      if (soundFile && !soundFile.name.endsWith(".ogg")) {
-        const modal = document.getElementById("progress-modal");
-        const bar = document.getElementById("progress-bar");
-        const text = document.getElementById("progress-text");
-        modal.style.display = "flex";
-        try {
-          soundFile = await convertToOgg(soundFile, (p) => { bar.style.width = p + "%"; text.innerText = p + "%"; });
-          showToast("Audio converted!", "success");
-        } catch (err) { 
-          modal.style.display = "none"; 
-          bar.style.width = "0%"; text.innerText = "0%";
-          return showToast("Audio conversion failed!", "error"); 
+      // encode uploaded audio
+      async function convertToOgg(rawFile, onProgress) {
+        const audioCtx = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+        const arrayBuffer = await rawFile.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        const channel0 = audioBuffer.getChannelData(0);
+        let monoData = channel0;
+        if (audioBuffer.numberOfChannels > 1) {
+          const channel1 = audioBuffer.getChannelData(1);
+          monoData = new Float32Array(channel0.length);
+          for (let i = 0; i < channel0.length; i++)
+            monoData[i] = (channel0[i] + channel1[i]) / 2;
         }
-        modal.style.display = "none"; 
-        bar.style.width = "0%"; text.innerText = "0%";
+        const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
+        const CHUNK_LEN = audioBuffer.sampleRate * 3;
+        for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
+          encoder.encode([
+            monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length)),
+          ]);
+          if (onProgress)
+            onProgress(
+              Math.round(
+                (Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) *
+                  100,
+              ),
+            );
+          await new Promise((r) => setTimeout(r, 5));
+        }
+        return encoder.finish();
       }
 
-      const zip = new JSZip();
-      const pName = document.getElementById("pack-name").value.trim() || "Custom Totem Pack";
-      zip.file("pack.mcmeta", JSON.stringify({ pack: { pack_format: parseInt(version), description: document.getElementById("pack-desc").value.trim() || "Totem Pack" } }, null, 2));
+      async function fetchSkin(silent = false) {
+        const username = document.getElementById("username-input").value.trim();
+        const outerLayer = document.getElementById("outer-layer-check").checked;
+        const btn = document.querySelector(".btn-fetch");
 
-      const tFolder = parseInt(version) >= 4 ? "item" : "items";
-      const assets = [
-        { path: `assets/minecraft/textures/${tFolder}/totem_of_undying.png`, file: currentSkinBlob, default: null },
-        { path: "assets/minecraft/sounds/item/totem/use_totem.ogg", file: soundFile, default: DEFAULTS.sound },
-        { path: "pack.png", file: document.getElementById("pack-icon-input").files[0] || currentSkinBlob, default: DEFAULTS.icon }
-      ];
+        if (!username) {
+          if (!silent) showToast("Enter a username", "error");
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "...";
 
-      try {
-        await Promise.all(assets.map(async (a) => {
-          if (a.file) zip.file(a.path, a.file);
-          else if (a.default) { try { const r = await fetch(a.default); if (r.ok) zip.file(a.path, await r.blob()); } catch (e) {} }
-        }));
-        zip.generateAsync({ type: "blob" }).then((c) => saveAs(c, pName.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".zip"));
-        showToast("Pack Downloaded!", "success");
-      } catch (err) { showToast("Error generating pack", "error"); }
-    }
+        if (selectedStyle === "full") {
+          let baseUrl = outerLayer
+            ? "https://minotar.net/armor/body/"
+            : "https://minotar.net/body/";
+          const url = `${baseUrl}${username}/128.png`;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Err");
+            currentSkinBlob = await res.blob();
+            updateMainPreview(currentSkinBlob);
+            if (!silent) showToast("Skin loaded!", "success");
+            clearFileUI();
+          } catch (err) {
+            if (!silent) showToast("User not found", "error");
+            currentSkinBlob = null;
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Load";
+          }
+        } else {
+          const url = `https://minotar.net/skin/${username}`;
+          try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Err");
+            const blob = await res.blob();
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+              try {
+                originalSkinImage = img;
+                renderTotem();
+                if (!silent) showToast("Skin loaded!", "success");
+                clearFileUI();
+              } catch (e) {
+                if (!silent) showToast("Error rendering skin", "error");
+              } finally {
+                btn.disabled = false;
+                btn.textContent = "Load";
+              }
+            };
+            img.onerror = () => {
+              if (!silent) showToast("Error parsing skin image", "error");
+              btn.disabled = false;
+              btn.textContent = "Load";
+            };
+            img.src = URL.createObjectURL(blob);
+          } catch (err) {
+            if (!silent) showToast("User not found", "error");
+            originalSkinImage = null;
+            btn.disabled = false;
+            btn.textContent = "Load";
+          }
+        }
+      }
 
-    function resetForm() {
-      document.getElementById("username-input").value = "";
-      document.getElementById("pack-name").value = "";
-      document.getElementById("pack-desc").value = "";
-      document.getElementById("sound").value = "";
-      document.getElementById("pack-icon-input").value = "";
-      document.getElementById("skin-file-input").value = "";
-      
-      document.getElementById("version-select").value = "";
-      document.getElementById("version-label-text").textContent = "Select Minecraft Version...";
-      
-      selectSymmetry('arms', 'none', 'Off');
-      selectSymmetry('legs', 'none', 'Off');
-      
-      document.getElementById("outer-layer-check").checked = true;
-      
-      const hdCheck = document.getElementById("hd-layer-check");
-      const hdWrapper = document.getElementById("hd-layer-wrapper");
-      hdCheck.checked = false; hdCheck.disabled = false;
-      hdWrapper.style.opacity = "1"; hdWrapper.style.cursor = "pointer";
+      // handles resource pack creation
+      async function generatePack() {
+        const version = document.getElementById("version-select").value;
+        if (!version) {
+          document
+            .getElementById("version-dropdown-label")
+            .classList.add("input-error");
+          return showToast("Select a version!", "error");
+        }
+        if (!currentSkinBlob)
+          return showToast("Load or upload a skin first!", "error");
 
-      originalSkinImage = null; currentSkinBlob = null;
+        let soundFile = document.getElementById("sound").files[0];
+        if (soundFile && !soundFile.name.endsWith(".ogg")) {
+          const modal = document.getElementById("progress-modal");
+          const bar = document.getElementById("progress-bar");
+          const text = document.getElementById("progress-text");
+          modal.style.display = "flex";
+          try {
+            soundFile = await convertToOgg(soundFile, (p) => {
+              bar.style.width = p + "%";
+              text.innerText = p + "%";
+            });
+            showToast("Audio converted!", "success");
+          } catch (err) {
+            modal.style.display = "none";
+            bar.style.width = "0%";
+            text.innerText = "0%";
+            return showToast("Audio conversion failed!", "error");
+          }
+          modal.style.display = "none";
+          bar.style.width = "0%";
+          text.innerText = "0%";
+        }
 
-      document.querySelectorAll(".initial-content").forEach((el) => (el.style.display = "flex"));
-      document.querySelectorAll(".preview-media-small").forEach((el) => { el.style.display = "none"; el.innerHTML = ""; });
+        const zip = new JSZip();
+        const pName =
+          document.getElementById("pack-name").value.trim() ||
+          "Custom Totem Pack";
+        zip.file(
+          "pack.mcmeta",
+          JSON.stringify(
+            {
+              pack: {
+                pack_format: parseInt(version),
+                description:
+                  document.getElementById("pack-desc").value.trim() ||
+                  "Totem Pack",
+              },
+            },
+            null,
+            2,
+          ),
+        );
 
-      document.getElementById("advanced-toggle").checked = false;
-      closeAllDropdowns();
+        const tFolder = parseInt(version) >= 4 ? "item" : "items";
+        const assets = [
+          {
+            path: `assets/minecraft/textures/${tFolder}/totem_of_undying.png`,
+            file: currentSkinBlob,
+            default: null,
+          },
+          {
+            path: "assets/minecraft/sounds/item/totem/use_totem.ogg",
+            file: soundFile,
+            default: DEFAULTS.sound,
+          },
+          {
+            path: "pack.png",
+            file:
+              document.getElementById("pack-icon-input").files[0] ||
+              currentSkinBlob,
+            default: DEFAULTS.icon,
+          },
+        ];
 
-      selectStyle("mini");
-      showToast("Reset successful", "success");
-    }
-  </script>
-</body>
+        try {
+          await Promise.all(
+            assets.map(async (a) => {
+              if (a.file) zip.file(a.path, a.file);
+              else if (a.default) {
+                try {
+                  const r = await fetch(a.default);
+                  if (r.ok) zip.file(a.path, await r.blob());
+                } catch (e) {}
+              }
+            }),
+          );
+          zip
+            .generateAsync({ type: "blob" })
+            .then((c) =>
+              saveAs(
+                c,
+                pName.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".zip",
+              ),
+            );
+          showToast("Pack Downloaded!", "success");
+        } catch (err) {
+          showToast("Error generating pack", "error");
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("username-input").value = "";
+        document.getElementById("pack-name").value = "";
+        document.getElementById("pack-desc").value = "";
+        document.getElementById("sound").value = "";
+        document.getElementById("pack-icon-input").value = "";
+        document.getElementById("skin-file-input").value = "";
+
+        document.getElementById("version-select").value = "";
+        document.getElementById("version-label-text").textContent =
+          "Select Minecraft Version...";
+
+        selectSymmetry("arms", "none", "Off");
+        selectSymmetry("legs", "none", "Off");
+
+        document.getElementById("outer-layer-check").checked = true;
+
+        const hdCheck = document.getElementById("hd-layer-check");
+        const hdWrapper = document.getElementById("hd-layer-wrapper");
+        hdCheck.checked = false;
+        hdCheck.disabled = false;
+        hdWrapper.style.opacity = "1";
+        hdWrapper.style.cursor = "pointer";
+
+        originalSkinImage = null;
+        currentSkinBlob = null;
+
+        document
+          .querySelectorAll(".initial-content")
+          .forEach((el) => (el.style.display = "flex"));
+        document.querySelectorAll(".preview-media-small").forEach((el) => {
+          el.style.display = "none";
+          el.innerHTML = "";
+        });
+
+        document.getElementById("advanced-toggle").checked = false;
+        closeAllDropdowns();
+
+        selectStyle("mini");
+        showToast("Reset successful", "success");
+      }
+    </script>
+  </body>
 </html>

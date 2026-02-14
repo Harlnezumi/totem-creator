@@ -1,558 +1,932 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Totem Generator</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Totem Generator</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-  
-  <link rel="stylesheet" href="style.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <link rel="stylesheet" href="style.css" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-  <script>var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };</script>
-  <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
-</head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+    <script>
+      var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
+  </head>
 
-<body>
-  <input class="hidden-check" type="checkbox" id="theme" />
-  <label for="theme" class="theme-toggle">
-    <svg id="sun-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-      <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
-      <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
-    </svg>
-    <svg id="moon-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
-    </svg>
-  </label>
-  
-  <div class="dark-back"></div>
-  <div class="light-back"></div>
+  <body>
+    <input class="hidden-check" type="checkbox" id="theme" />
+    <label for="theme" class="theme-toggle">
+      <svg
+        id="sun-icon"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+        <path
+          d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
+        ></path>
+      </svg>
+      <svg
+        id="moon-icon"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path
+          d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
+        ></path>
+      </svg>
+    </label>
 
-  <div id="loading-screen">
-    <div class="loader"></div>
-    <div class="loader-text">Loading...</div>
-  </div>
-  <div id="toast-container"></div>
-  <div id="progress-modal" class="modal-overlay">
-    <div class="modal-content">
-      <h3>Converting Audio...</h3>
-      <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
-      <p id="progress-text">0%</p>
+    <div class="dark-back"></div>
+    <div class="light-back"></div>
+
+    <div id="loading-screen">
+      <div class="loader"></div>
+      <div class="loader-text">Loading...</div>
     </div>
-  </div>
-  
-  <div class="app-wrapper">
-    <div class="topnav">
-      <div class="nav-left">
-        <a href="index.html" class="brand">
-          <img src="avatar.png" alt="Logo" />
-          <span>Totem Generator</span>
+    <div id="toast-container"></div>
+    <div id="progress-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Converting Audio...</h3>
+        <div class="progress-container">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <p id="progress-text">0%</p>
+      </div>
+    </div>
+
+    <div class="app-wrapper">
+      <div class="topnav">
+        <div class="nav-left">
+          <a href="index.html" class="brand">
+            <img src="img/avatar.png" alt="Logo" />
+            <span>Totem Generator</span>
+          </a>
+          <nav class="nav-links">
+            <a href="index.html" class="nav-btn active">Generator</a>
+            <a href="skin-to-totem.html" class="nav-btn">Skin to Totem</a>
+          </nav>
+        </div>
+        <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
+          <span>Buy me a Coffee</span>
         </a>
-        <nav class="nav-links">
-          <a href="index.html" class="nav-btn active">Generator</a>
-          <a href="skin-to-totem.html" class="nav-btn">Skin to Totem</a>
-        </nav>
       </div>
-      <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-          <line x1="6" y1="1" x2="6" y2="4"></line>
-          <line x1="10" y1="1" x2="10" y2="4"></line>
-          <line x1="14" y1="1" x2="14" y2="4"></line>
-        </svg>
-        <span>Buy me a Coffee</span>
-      </a>
-    </div>
 
-    <div class="container generator-mode">
-      <button class="reset-button" onclick="resetForm()" title="Reset all fields">
-        <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff342b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-          <path d="M3 3v5h5"></path>
-        </svg>
-        <span class="lable">Reset</span>
-      </button>
+      <div class="container generator-mode">
+        <button
+          class="reset-button"
+          onclick="resetForm()"
+          title="Reset all fields"
+        >
+          <svg
+            class="svg-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ff342b"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span class="lable">Reset</span>
+        </button>
 
-      <h1>Totem Generator</h1>
+        <h1>Totem Generator</h1>
 
-      <div>
-        <label class="style-label">Target Version</label>
-        <div class="pure-dropdown-container">
-          <input class="hidden-check dropdown" type="checkbox" id="dropdown-version" name="dropdown-version"/>
-          <label class="for-dropdown" for="dropdown-version" id="version-dropdown-label">
-            <span id="version-label-text">Select Minecraft Version...</span> <i class="uil uil-angle-down"></i>
+        <div>
+          <label class="style-label">Target Version</label>
+          <div class="pure-dropdown-container">
+            <input
+              class="hidden-check dropdown"
+              type="checkbox"
+              id="dropdown-version"
+              name="dropdown-version"
+            />
+            <label
+              class="for-dropdown"
+              for="dropdown-version"
+              id="version-dropdown-label"
+            >
+              <span id="version-label-text">Select Minecraft Version...</span>
+              <i class="uil uil-angle-down"></i>
+            </label>
+            <div class="section-dropdown" id="version-select-box">
+              <input
+                class="hidden-check dropdown-sub"
+                type="checkbox"
+                id="v1-21"
+                name="v1-21"
+              />
+              <label class="for-dropdown-sub" for="v1-21"
+                >1.21 (Tricky Trials) <i class="uil uil-plus"></i
+              ></label>
+              <div class="section-dropdown-sub">
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('46', '1.21.4')"
+                  >1.21.4</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('42', '1.21.2 - 1.21.3')"
+                  >1.21.2 - 1.21.3</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('34', '1.21 - 1.21.1')"
+                  >1.21 - 1.21.1</a
+                >
+              </div>
+
+              <input
+                class="hidden-check dropdown-sub"
+                type="checkbox"
+                id="v1-20"
+                name="v1-20"
+              />
+              <label class="for-dropdown-sub" for="v1-20"
+                >1.20 (Trails & Tales) <i class="uil uil-plus"></i
+              ></label>
+              <div class="section-dropdown-sub">
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('32', '1.20.5 - 1.20.6')"
+                  >1.20.5 - 1.20.6</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('22', '1.20.3 - 1.20.4')"
+                  >1.20.3 - 1.20.4</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('18', '1.20.2')"
+                  >1.20.2</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('15', '1.20 - 1.20.1')"
+                  >1.20 - 1.20.1</a
+                >
+              </div>
+
+              <input
+                class="hidden-check dropdown-sub"
+                type="checkbox"
+                id="v1-19"
+                name="v1-19"
+              />
+              <label class="for-dropdown-sub" for="v1-19"
+                >1.19 (The Wild Update) <i class="uil uil-plus"></i
+              ></label>
+              <div class="section-dropdown-sub">
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('13', '1.19.4')"
+                  >1.19.4</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('12', '1.19.3')"
+                  >1.19.3</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('9', '1.19 - 1.19.2')"
+                  >1.19 - 1.19.2</a
+                >
+              </div>
+
+              <input
+                class="hidden-check dropdown-sub"
+                type="checkbox"
+                id="v-older"
+                name="v-older"
+              />
+              <label class="for-dropdown-sub" for="v-older"
+                >Older Versions <i class="uil uil-plus"></i
+              ></label>
+              <div class="section-dropdown-sub">
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('8', '1.18.x')"
+                  >1.18.x</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('7', '1.17.x')"
+                  >1.17.x</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('6', '1.16.2 - 1.16.5')"
+                  >1.16.2 - 1.16.5</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('4', '1.13 - 1.14.x')"
+                  >1.13 - 1.14.x</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('3', '1.11 - 1.12.x')"
+                  >1.11 - 1.12.x</a
+                >
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="version-select" value="" />
+        </div>
+
+        <div class="upload-grid">
+          <label class="drop-zone-mini drop-zone-large" id="drop-png">
+            <div class="initial-content">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                />
+              </svg>
+              <p><strong>Texture</strong></p>
+              <small>Any Image (Auto-converts to PNG)</small>
+            </div>
+            <div class="preview-media"></div>
+            <input type="file" id="image" accept="image/*" />
           </label>
-          <div class="section-dropdown" id="version-select-box"> 
-            
-            <input class="hidden-check dropdown-sub" type="checkbox" id="v1-21" name="v1-21"/>
-            <label class="for-dropdown-sub" for="v1-21">1.21 (Tricky Trials) <i class="uil uil-plus"></i></label>
-            <div class="section-dropdown-sub"> 
-              <a href="javascript:void(0)" onclick="selectVersion('46', '1.21.4')">1.21.4</a>
-              <a href="javascript:void(0)" onclick="selectVersion('42', '1.21.2 - 1.21.3')">1.21.2 - 1.21.3</a>
-              <a href="javascript:void(0)" onclick="selectVersion('34', '1.21 - 1.21.1')">1.21 - 1.21.1</a>
-            </div>
 
-            <input class="hidden-check dropdown-sub" type="checkbox" id="v1-20" name="v1-20"/>
-            <label class="for-dropdown-sub" for="v1-20">1.20 (Trails & Tales) <i class="uil uil-plus"></i></label>
-            <div class="section-dropdown-sub"> 
-              <a href="javascript:void(0)" onclick="selectVersion('32', '1.20.5 - 1.20.6')">1.20.5 - 1.20.6</a>
-              <a href="javascript:void(0)" onclick="selectVersion('22', '1.20.3 - 1.20.4')">1.20.3 - 1.20.4</a>
-              <a href="javascript:void(0)" onclick="selectVersion('18', '1.20.2')">1.20.2</a>
-              <a href="javascript:void(0)" onclick="selectVersion('15', '1.20 - 1.20.1')">1.20 - 1.20.1</a>
+          <label class="drop-zone-mini drop-zone-large" id="drop-ogg">
+            <div class="initial-content">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"
+                />
+              </svg>
+              <p><strong>Sound</strong></p>
+              <small>Any Audio (Auto-converts to OGG)</small>
             </div>
-
-            <input class="hidden-check dropdown-sub" type="checkbox" id="v1-19" name="v1-19"/>
-            <label class="for-dropdown-sub" for="v1-19">1.19 (The Wild Update) <i class="uil uil-plus"></i></label>
-            <div class="section-dropdown-sub"> 
-              <a href="javascript:void(0)" onclick="selectVersion('13', '1.19.4')">1.19.4</a>
-              <a href="javascript:void(0)" onclick="selectVersion('12', '1.19.3')">1.19.3</a>
-              <a href="javascript:void(0)" onclick="selectVersion('9', '1.19 - 1.19.2')">1.19 - 1.19.2</a>
-            </div>
-
-            <input class="hidden-check dropdown-sub" type="checkbox" id="v-older" name="v-older"/>
-            <label class="for-dropdown-sub" for="v-older">Older Versions <i class="uil uil-plus"></i></label>
-            <div class="section-dropdown-sub"> 
-              <a href="javascript:void(0)" onclick="selectVersion('8', '1.18.x')">1.18.x</a>
-              <a href="javascript:void(0)" onclick="selectVersion('7', '1.17.x')">1.17.x</a>
-              <a href="javascript:void(0)" onclick="selectVersion('6', '1.16.2 - 1.16.5')">1.16.2 - 1.16.5</a>
-              <a href="javascript:void(0)" onclick="selectVersion('4', '1.13 - 1.14.x')">1.13 - 1.14.x</a>
-              <a href="javascript:void(0)" onclick="selectVersion('3', '1.11 - 1.12.x')">1.11 - 1.12.x</a>
-            </div>
-
-          </div>
+            <div class="preview-media"></div>
+            <input type="file" id="sound" accept="audio/*" />
+          </label>
         </div>
-        <input type="hidden" id="version-select" value="">
-      </div>
 
-      <div class="upload-grid">
-        <label class="drop-zone-mini drop-zone-large" id="drop-png">
-          <div class="initial-content">
-            <svg viewBox="0 0 24 24">
-              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-            </svg>
-            <p><strong>Texture</strong></p>
-            <small>Any Image (Auto-converts to PNG)</small>
-          </div>
-          <div class="preview-media"></div>
-          <input type="file" id="image" accept="image/*" />
-        </label>
+        <input class="hidden-check" type="checkbox" id="advanced-toggle" />
+        <div class="advanced-settings-container">
+          <label class="advanced-toggle-label" for="advanced-toggle">
+            Advanced Settings <i class="uil uil-plus"></i>
+          </label>
+          <div class="advanced-content-wrapper">
+            <div class="advanced-content-inner">
+              <div class="settings-content">
+                <div style="grid-column: span 2">
+                  <label class="checkbox-wrapper" for="remove-bg-check">
+                    <input
+                      type="checkbox"
+                      id="remove-bg-check"
+                      class="checkbox-input"
+                    />
+                    <div class="checkbox-visual">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="checkbox-label-content">
+                      <span class="checkbox-main-text"
+                        >Auto-Remove Background</span
+                      >
+                      <span class="checkbox-subtext"
+                        >Detects and removes the background color</span
+                      >
+                    </div>
+                  </label>
+                </div>
 
-        <label class="drop-zone-mini drop-zone-large" id="drop-ogg">
-          <div class="initial-content">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" />
-            </svg>
-            <p><strong>Sound</strong></p>
-            <small>Any Audio (Auto-converts to OGG)</small>
-          </div>
-          <div class="preview-media"></div>
-          <input type="file" id="sound" accept="audio/*" />
-        </label>
-      </div>
+                <div style="grid-column: span 2">
+                  <label class="drop-zone-extra" id="drop-icon">
+                    <div
+                      class="initial-content"
+                      style="display: flex; align-items: center; gap: 10px"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                        />
+                      </svg>
+                      <span style="color: var(--text-muted); font-weight: 600"
+                        >Pack Icon (Optional)</span
+                      >
+                    </div>
+                    <div class="preview-media-small"></div>
+                    <input
+                      type="file"
+                      id="pack-icon-input"
+                      accept="image/png"
+                    />
+                  </label>
+                </div>
 
-      <input class="hidden-check" type="checkbox" id="advanced-toggle"/>
-      <div class="advanced-settings-container">
-        <label class="advanced-toggle-label" for="advanced-toggle">
-          Advanced Settings <i class="uil uil-plus"></i>
-        </label>
-        <div class="advanced-content-wrapper">
-          <div class="advanced-content-inner">
-            <div class="settings-content">
-              
-              <div style="grid-column: span 2;">
-                <label class="checkbox-wrapper" for="remove-bg-check">
-                  <input type="checkbox" id="remove-bg-check" class="checkbox-input">
-                  <div class="checkbox-visual">
-                    <svg viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                  </div>
-                  <div class="checkbox-label-content">
-                    <span class="checkbox-main-text">Auto-Remove Background</span>
-                    <span class="checkbox-subtext">Detects and removes the background color</span>
-                  </div>
-                </label>
+                <div style="grid-column: span 2">
+                  <input
+                    type="text"
+                    id="pack-name"
+                    class="text-input"
+                    placeholder="Pack Name (e.g. My Custom Totem)"
+                  />
+                </div>
+                <div style="grid-column: span 2">
+                  <input
+                    type="text"
+                    id="pack-desc"
+                    class="text-input"
+                    placeholder="Pack Description (e.g. Best pack ever made)"
+                  />
+                </div>
               </div>
-
-              <div style="grid-column: span 2;">
-                <label class="drop-zone-extra" id="drop-icon">
-                  <div class="initial-content" style="display: flex; align-items: center; gap: 10px">
-                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
-                    <span style="color: var(--text-muted); font-weight: 600">Pack Icon (Optional)</span>
-                  </div>
-                  <div class="preview-media-small"></div>
-                  <input type="file" id="pack-icon-input" accept="image/png" />
-                </label>
-              </div>
-
-              <div style="grid-column: span 2">
-                <input type="text" id="pack-name" class="text-input" placeholder="Pack Name (e.g. My Custom Totem)" />
-              </div>
-              <div style="grid-column: span 2">
-                <input type="text" id="pack-desc" class="text-input" placeholder="Pack Description (e.g. Best pack ever made)" />
-              </div>
-
             </div>
           </div>
         </div>
+
+        <button class="btn-download" onclick="generatePack()">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+          </svg>
+          Download Resource Pack
+        </button>
       </div>
-
-      <button class="btn-download" onclick="generatePack()">
-        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
-        Download Resource Pack
-      </button>
-
     </div>
-  </div> 
 
-  <script>
-    function showToast(message, type = "error") {
-      const container = document.getElementById("toast-container");
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      
-      let svgPath = type === "error" ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
-      if(type === "info") svgPath = "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z";
-      
-      toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${svgPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
-      container.appendChild(toast);
-      
-      setTimeout(() => { 
-        toast.style.animation = "slideOut 0.4s ease forwards"; 
-        toast.addEventListener("animationend", () => toast.remove()); 
-      }, 4000);
-    }
+    <script>
+      function showToast(message, type = "error") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
 
-    const DEFAULTS = { texture: "./totem.png", sound: "./sound_totem.ogg", icon: "./pack.png" };
-    let currentTextureFile = null;
+        let svgPath =
+          type === "error"
+            ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
+        if (type === "info")
+          svgPath =
+            "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z";
 
-    // --- DROPDOWN ACCORDION & POSITION LOGIC ---
-    function closeOtherDropdowns(current, selector) {
-      document.querySelectorAll(selector).forEach(cb => {
-        if (cb !== current) {
+        toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${svgPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = "slideOut 0.4s ease forwards";
+          toast.addEventListener("animationend", () => toast.remove());
+        }, 4000);
+      }
+
+      const DEFAULTS = {
+        texture: "img/totem.png",
+        sound: "img/sound_totem.ogg",
+        icon: "img/pack.png",
+      };
+      let currentTextureFile = null;
+
+      // dropdown accordion config
+      function closeOtherDropdowns(current, selector) {
+        document.querySelectorAll(selector).forEach((cb) => {
+          if (cb !== current) {
+            cb.checked = false;
+            cb.classList.remove("drop-up-active");
+            const menu = cb
+              .closest(".pure-dropdown-container")
+              ?.querySelector(".section-dropdown");
+            if (menu) menu.classList.remove("drop-up");
+          }
+        });
+      }
+
+      function calculateDropdownPosition(cb) {
+        const container = cb.closest(".pure-dropdown-container");
+        const menu = container.querySelector(".section-dropdown");
+        const trigger = container.querySelector(".for-dropdown");
+        if (!menu || !trigger) return;
+
+        menu.classList.remove("drop-up");
+        cb.classList.remove("drop-up-active");
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const menuHeight = Math.max(menu.scrollHeight, 250);
+
+        // flip upwards if no space on screen
+        if (triggerRect.bottom + menuHeight > window.innerHeight - 20) {
+          menu.classList.add("drop-up");
+          cb.classList.add("drop-up-active");
+        }
+      }
+
+      function closeAllDropdowns() {
+        document.querySelectorAll(".dropdown, .dropdown-sub").forEach((cb) => {
           cb.checked = false;
-          cb.classList.remove('drop-up-active');
-          const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
-          if (menu) menu.classList.remove('drop-up');
-        }
-      });
-    }
-
-    function calculateDropdownPosition(cb) {
-      const container = cb.closest('.pure-dropdown-container');
-      const menu = container.querySelector('.section-dropdown');
-      const trigger = container.querySelector('.for-dropdown');
-      if (!menu || !trigger) return;
-
-      menu.classList.remove('drop-up');
-      cb.classList.remove('drop-up-active');
-
-      const triggerRect = trigger.getBoundingClientRect();
-      const menuHeight = Math.max(menu.scrollHeight, 250); 
-
-      if (triggerRect.bottom + menuHeight > window.innerHeight - 20) {
-        menu.classList.add('drop-up');
-        cb.classList.add('drop-up-active');
-      }
-    }
-
-    function closeAllDropdowns() {
-      document.querySelectorAll('.dropdown, .dropdown-sub').forEach(cb => {
-        cb.checked = false;
-        cb.classList.remove('drop-up-active');
-        const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
-        if (menu) menu.classList.remove('drop-up');
-      });
-    }
-
-    function selectVersion(val, text) {
-      document.getElementById('version-select').value = val;
-      document.getElementById('version-label-text').textContent = text;
-      document.getElementById('version-dropdown-label').classList.remove("input-error");
-      closeAllDropdowns();
-    }
-
-    // --- Init & Listeners ---
-    document.addEventListener('DOMContentLoaded', () => {
-      const bgCheck = document.getElementById('remove-bg-check');
-      if (bgCheck) {
-        bgCheck.addEventListener('change', async () => {
-          if (currentTextureFile) await updateTexturePreview(currentTextureFile);
+          cb.classList.remove("drop-up-active");
+          const menu = cb
+            .closest(".pure-dropdown-container")
+            ?.querySelector(".section-dropdown");
+          if (menu) menu.classList.remove("drop-up");
         });
       }
-    });
 
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        document.getElementById("loading-screen").classList.add("fadeOut");
-        setTimeout(() => document.getElementById("loading-screen").style.display = "none", 800);
-      }, 800);
+      function selectVersion(val, text) {
+        document.getElementById("version-select").value = val;
+        document.getElementById("version-label-text").textContent = text;
+        document
+          .getElementById("version-dropdown-label")
+          .classList.remove("input-error");
+        closeAllDropdowns();
+      }
 
-      document.querySelectorAll('.dropdown').forEach(cb => {
-        cb.addEventListener('change', function() {
-          if (this.checked) {
-            closeOtherDropdowns(this, '.dropdown');
-            calculateDropdownPosition(this); 
+      document.addEventListener("DOMContentLoaded", () => {
+        const bgCheck = document.getElementById("remove-bg-check");
+        if (bgCheck) {
+          bgCheck.addEventListener("change", async () => {
+            if (currentTextureFile)
+              await updateTexturePreview(currentTextureFile);
+          });
+        }
+      });
+
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          document.getElementById("loading-screen").classList.add("fadeOut");
+          setTimeout(
+            () =>
+              (document.getElementById("loading-screen").style.display =
+                "none"),
+            800,
+          );
+        }, 800);
+
+        document.querySelectorAll(".dropdown").forEach((cb) => {
+          cb.addEventListener("change", function () {
+            if (this.checked) {
+              closeOtherDropdowns(this, ".dropdown");
+              calculateDropdownPosition(this);
+            } else {
+              this.classList.remove("drop-up-active");
+              const menu =
+                this.parentElement.querySelector(".section-dropdown");
+              if (menu) menu.classList.remove("drop-up");
+              const subs = this.parentElement.querySelectorAll(".dropdown-sub");
+              subs.forEach((sub) => (sub.checked = false));
+            }
+          });
+        });
+
+        document.querySelectorAll(".dropdown-sub").forEach((cb) => {
+          cb.addEventListener("change", function () {
+            if (this.checked) closeOtherDropdowns(this, ".dropdown-sub");
+          });
+        });
+
+        window.addEventListener("resize", () => {
+          document
+            .querySelectorAll(".dropdown:checked")
+            .forEach((cb) => calculateDropdownPosition(cb));
+        });
+
+        document.addEventListener("click", function (e) {
+          if (!e.target.closest(".pure-dropdown-container"))
+            closeAllDropdowns();
+        });
+      });
+
+      // handles drag and drop interactions
+      function initDropZone(zoneId, inputId) {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(inputId);
+        const isExtra = zone.classList.contains("drop-zone-extra");
+        const preview = zone.querySelector(
+          isExtra ? ".preview-media-small" : ".preview-media",
+        );
+        const initial = zone.querySelector(".initial-content");
+
+        let dragCounter = 0;
+        let isErrorActive = false;
+
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
+          zone.addEventListener(
+            eventName,
+            (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            false,
+          ),
+        );
+
+        zone.addEventListener("dragenter", () => {
+          dragCounter++;
+          if (!isErrorActive) zone.classList.add("dragover");
+        });
+        zone.addEventListener("dragleave", () => {
+          dragCounter--;
+          if (dragCounter <= 0) {
+            dragCounter = 0;
+            zone.classList.remove("dragover");
+          }
+        });
+
+        zone.addEventListener("drop", (e) => {
+          dragCounter = 0;
+          zone.classList.remove("dragover");
+          if (e.dataTransfer.files.length) {
+            input.files = e.dataTransfer.files;
+            handleFiles(e.dataTransfer.files);
+          }
+        });
+
+        input.addEventListener("change", (e) => handleFiles(e.target.files));
+
+        function triggerError(msg) {
+          isErrorActive = true;
+          zone.classList.remove("dragover");
+          zone.classList.add("input-error", "shake");
+          input.value = "";
+          showToast(msg, "error");
+          setTimeout(() => zone.classList.remove("shake"), 500);
+          setTimeout(() => {
+            zone.classList.remove("input-error");
+            isErrorActive = false;
+          }, 2000);
+        }
+
+        function handleFiles(files) {
+          if (!files.length) return;
+          const file = files[0];
+
+          if (file.size > 10 * 1024 * 1024)
+            return triggerError("File is too big! Max 10MB.");
+
+          const isImg = inputId === "image" || inputId === "pack-icon-input";
+          if (isImg && !file.type.startsWith("image/"))
+            return triggerError("Please upload an image file!");
+          if (!isImg && !file.type.startsWith("audio/"))
+            return triggerError("Please upload an audio file!");
+
+          zone.classList.remove("input-error");
+
+          if (inputId === "image") {
+            currentTextureFile = file;
+            updateTexturePreview(file);
           } else {
-            this.classList.remove('drop-up-active');
-            const menu = this.parentElement.querySelector('.section-dropdown');
-            if (menu) menu.classList.remove('drop-up');
-            const subs = this.parentElement.querySelectorAll('.dropdown-sub');
-            subs.forEach(sub => sub.checked = false);
+            initial.style.display = "none";
+            preview.style.display = "flex";
+            preview.innerHTML = "";
+
+            if (inputId === "sound") {
+              const el = document.createElement("audio");
+              el.src = URL.createObjectURL(file);
+              el.controls = true;
+              preview.appendChild(el);
+            } else if (isExtra && isImg) {
+              const el = document.createElement("img");
+              el.src = URL.createObjectURL(file);
+              preview.appendChild(el);
+            }
+
+            const name = document.createElement("div");
+            name.className = isExtra ? "file-name-small" : "";
+            if (!isExtra) {
+              name.style.marginTop = "8px";
+              name.style.fontSize = "0.8rem";
+              name.style.color = "var(--text-main)";
+            }
+            name.textContent = file.name;
+            preview.appendChild(name);
           }
-        });
-      });
-
-      document.querySelectorAll('.dropdown-sub').forEach(cb => {
-        cb.addEventListener('change', function() {
-          if (this.checked) closeOtherDropdowns(this, '.dropdown-sub');
-        });
-      });
-
-      window.addEventListener('resize', () => {
-        document.querySelectorAll('.dropdown:checked').forEach(cb => calculateDropdownPosition(cb));
-      });
-
-      document.addEventListener("click", function (e) {
-        if (!e.target.closest('.pure-dropdown-container')) closeAllDropdowns();
-      });
-    });
-
-    // --- Drag & Drop ---
-    function initDropZone(zoneId, inputId) {
-      const zone = document.getElementById(zoneId);
-      const input = document.getElementById(inputId);
-      const isExtra = zone.classList.contains("drop-zone-extra");
-      const preview = zone.querySelector(isExtra ? ".preview-media-small" : ".preview-media");
-      const initial = zone.querySelector(".initial-content");
-
-      let dragCounter = 0;
-      let isErrorActive = false;
-
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false));
-
-      zone.addEventListener('dragenter', () => { dragCounter++; if (!isErrorActive) zone.classList.add('dragover'); });
-      zone.addEventListener('dragleave', () => { dragCounter--; if (dragCounter <= 0) { dragCounter = 0; zone.classList.remove('dragover'); }});
-
-      zone.addEventListener('drop', (e) => {
-        dragCounter = 0; zone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; handleFiles(e.dataTransfer.files); }
-      });
-
-      input.addEventListener("change", (e) => handleFiles(e.target.files));
-
-      function triggerError(msg) {
-        isErrorActive = true; zone.classList.remove('dragover'); zone.classList.add("input-error", "shake");
-        input.value = ""; showToast(msg, "error");
-        setTimeout(() => zone.classList.remove("shake"), 500);
-        setTimeout(() => { zone.classList.remove("input-error"); isErrorActive = false; }, 2000);
-      }
-
-      function handleFiles(files) {
-        if (!files.length) return;
-        const file = files[0];
-
-        if (file.size > 10 * 1024 * 1024) return triggerError("File is too big! Max 10MB.");
-
-        const isImg = inputId === "image" || inputId === "pack-icon-input";
-        if (isImg && !file.type.startsWith("image/")) return triggerError("Please upload an image file!");
-        if (!isImg && !file.type.startsWith("audio/")) return triggerError("Please upload an audio file!");
-
-        zone.classList.remove("input-error");
-
-        if (inputId === "image") {
-          currentTextureFile = file; updateTexturePreview(file);
-        } else {
-          initial.style.display = "none"; preview.style.display = "flex"; preview.innerHTML = "";
-          
-          if (inputId === "sound") {
-            const el = document.createElement("audio"); el.src = URL.createObjectURL(file); el.controls = true; preview.appendChild(el);
-          } else if (isExtra && isImg) {
-            const el = document.createElement("img"); el.src = URL.createObjectURL(file); preview.appendChild(el);
-          }
-          
-          const name = document.createElement("div"); name.className = isExtra ? "file-name-small" : "";
-          if (!isExtra) { name.style.marginTop = "8px"; name.style.fontSize = "0.8rem"; name.style.color = "var(--text-main)"; }
-          name.textContent = file.name; preview.appendChild(name);
         }
       }
-    }
 
-    initDropZone("drop-png", "image");
-    initDropZone("drop-ogg", "sound");
-    initDropZone("drop-icon", "pack-icon-input");
+      initDropZone("drop-png", "image");
+      initDropZone("drop-ogg", "sound");
+      initDropZone("drop-icon", "pack-icon-input");
 
-    // --- Processing ---
-    async function convertToOgg(rawFile, onProgress) {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuffer = await rawFile.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      const channel0 = audioBuffer.getChannelData(0);
-      let monoData = channel0;
-      if (audioBuffer.numberOfChannels > 1) {
-        const channel1 = audioBuffer.getChannelData(1);
-        monoData = new Float32Array(channel0.length);
-        for (let i = 0; i < channel0.length; i++) monoData[i] = (channel0[i] + channel1[i]) / 2;
-      }
-      const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
-      const CHUNK_LEN = audioBuffer.sampleRate * 3;
-      for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
-        encoder.encode([monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length))]);
-        if (onProgress) onProgress(Math.round((Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) * 100));
-        await new Promise(r => setTimeout(r, 5));
-      }
-      return encoder.finish();
-    }
-
-    function convertToPng(file) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => {
-          const size = Math.max(img.width, img.height);
-          const canvas = document.createElement("canvas");
-          canvas.width = size; canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2);
-          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Failed")), "image/png");
-        };
-        img.onerror = reject;
-      });
-    }
-
-    function removeBackground(file) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width; canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-          const rBg = data[0], gBg = data[1], bBg = data[2];
-          const tolerance = 25;
-          for (let i = 0; i < data.length; i += 4) {
-            if (Math.abs(data[i] - rBg) + Math.abs(data[i + 1] - gBg) + Math.abs(data[i + 2] - bBg) < tolerance && data[i + 3] > 0) data[i + 3] = 0;
-          }
-          ctx.putImageData(new ImageData(data, canvas.width, canvas.height), 0, 0);
-          canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("BG Fail")), "image/png");
-        };
-        img.onerror = reject;
-      });
-    }
-
-    async function updateTexturePreview(file) {
-      const zone = document.getElementById('drop-png');
-      const preview = zone.querySelector(".preview-media");
-      const initial = zone.querySelector(".initial-content");
-      const isRemoveBg = document.getElementById('remove-bg-check').checked;
-
-      preview.style.opacity = "0.5";
-      let fileToRender = file;
-      if (isRemoveBg) { try { fileToRender = await removeBackground(file); } catch (e) { console.error(e); } }
-
-      initial.style.display = "none"; preview.style.display = "flex"; preview.style.opacity = "1"; preview.innerHTML = "";
-
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(fileToRender);
-      img.style.backgroundImage = "conic-gradient(var(--card-bg) 90deg, var(--input-bg) 90deg 180deg, var(--card-bg) 180deg 270deg, var(--input-bg) 270deg)";
-      img.style.backgroundSize = "20px 20px";
-      preview.appendChild(img);
-
-      const name = document.createElement("div");
-      name.style.fontSize = "0.8rem"; name.style.marginTop = "8px"; name.style.color = "var(--text-main)";
-      name.textContent = file.name + (isRemoveBg ? " (Processed)" : "");
-      preview.appendChild(name);
-    }
-
-    async function generatePack() {
-      const version = document.getElementById("version-select").value;
-      if (!version) { document.getElementById("version-dropdown-label").classList.add("input-error"); return showToast("Please select a version first!", "error"); }
-
-      const imageInput = document.getElementById("image").files[0];
-      const removeBgChecked = document.getElementById("remove-bg-check").checked;
-      let finalImageFile = imageInput;
-
-      if (imageInput) {
-        try {
-          if (removeBgChecked) { showToast("Removing background...", "info"); finalImageFile = await removeBackground(imageInput); }
-          else { finalImageFile = await convertToPng(imageInput); }
-        } catch (e) { return showToast("Failed to process image.", "error"); }
-      }
-
-      let soundFile = document.getElementById("sound").files[0];
-      if (soundFile && !soundFile.name.endsWith(".ogg")) {
-        const modal = document.getElementById("progress-modal");
-        const bar = document.getElementById("progress-bar");
-        const text = document.getElementById("progress-text");
-        modal.style.display = "flex";
-        try {
-          soundFile = await convertToOgg(soundFile, (p) => { bar.style.width = p + "%"; text.innerText = p + "%"; });
-          showToast("Audio converted!", "success");
-        } catch (err) { 
-          modal.style.display = "none"; 
-          bar.style.width = "0%"; text.innerText = "0%";
-          return showToast("Audio conversion failed!", "error"); 
+      // encode uploaded audio
+      async function convertToOgg(rawFile, onProgress) {
+        const audioCtx = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+        const arrayBuffer = await rawFile.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        const channel0 = audioBuffer.getChannelData(0);
+        let monoData = channel0;
+        if (audioBuffer.numberOfChannels > 1) {
+          const channel1 = audioBuffer.getChannelData(1);
+          monoData = new Float32Array(channel0.length);
+          for (let i = 0; i < channel0.length; i++)
+            monoData[i] = (channel0[i] + channel1[i]) / 2;
         }
-        modal.style.display = "none"; 
-        bar.style.width = "0%"; text.innerText = "0%";
+        const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
+        const CHUNK_LEN = audioBuffer.sampleRate * 3;
+        for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
+          encoder.encode([
+            monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length)),
+          ]);
+          if (onProgress)
+            onProgress(
+              Math.round(
+                (Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) *
+                  100,
+              ),
+            );
+          await new Promise((r) => setTimeout(r, 5));
+        }
+        return encoder.finish();
       }
 
-      const zip = new JSZip();
-      const pName = document.getElementById("pack-name").value.trim() || "Custom Totem Pack";
-      zip.file("pack.mcmeta", JSON.stringify({ pack: { pack_format: parseInt(version), description: document.getElementById("pack-desc").value.trim() || "Totem Pack" } }, null, 2));
-
-      const textureFolder = parseInt(version) >= 4 ? "item" : "items";
-      const assets = [
-        { path: `assets/minecraft/textures/${textureFolder}/totem_of_undying.png`, file: finalImageFile, default: DEFAULTS.texture },
-        { path: "assets/minecraft/sounds/item/totem/use_totem.ogg", file: soundFile, default: DEFAULTS.sound },
-        { path: "pack.png", file: document.getElementById("pack-icon-input").files[0] || finalImageFile, default: DEFAULTS.icon }
-      ];
-
-      try {
-        await Promise.all(assets.map(async (asset) => {
-          if (asset.file) zip.file(asset.path, asset.file);
-          else { try { const res = await fetch(asset.default); if (res.ok) zip.file(asset.path, await res.blob()); } catch (e) { } }
-        }));
-        zip.generateAsync({ type: "blob" }).then((content) => {
-          saveAs(content, (document.getElementById("pack-name").value.trim().replace(/[^a-z0-9]/gi, '_').toLowerCase() || "totem_pack") + ".zip");
-          showToast("Pack Generated Successfully!", "success");
+      function convertToPng(file) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          img.onload = () => {
+            const size = Math.max(img.width, img.height);
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2);
+            canvas.toBlob(
+              (blob) => (blob ? resolve(blob) : reject(new Error("Failed"))),
+              "image/png",
+            );
+          };
+          img.onerror = reject;
         });
-      } catch (err) { showToast("Error: " + err.message, "error"); }
-    }
+      }
 
-    function resetForm() {
-      document.getElementById("image").value = "";
-      document.getElementById("sound").value = "";
-      document.getElementById("pack-icon-input").value = "";
-      document.getElementById("pack-name").value = "";
-      document.getElementById("pack-desc").value = "";
-      document.getElementById("remove-bg-check").checked = false;
-      currentTextureFile = null;
+      function removeBackground(file) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+            ).data;
+            const rBg = data[0],
+              gBg = data[1],
+              bBg = data[2];
+            const tolerance = 25;
+            for (let i = 0; i < data.length; i += 4) {
+              if (
+                Math.abs(data[i] - rBg) +
+                  Math.abs(data[i + 1] - gBg) +
+                  Math.abs(data[i + 2] - bBg) <
+                  tolerance &&
+                data[i + 3] > 0
+              )
+                data[i + 3] = 0;
+            }
+            ctx.putImageData(
+              new ImageData(data, canvas.width, canvas.height),
+              0,
+              0,
+            );
+            canvas.toBlob(
+              (blob) => (blob ? resolve(blob) : reject(new Error("BG Fail"))),
+              "image/png",
+            );
+          };
+          img.onerror = reject;
+        });
+      }
 
-      document.getElementById('version-select').value = "";
-      document.getElementById('version-label-text').textContent = "Select Minecraft Version...";
+      async function updateTexturePreview(file) {
+        const zone = document.getElementById("drop-png");
+        const preview = zone.querySelector(".preview-media");
+        const initial = zone.querySelector(".initial-content");
+        const isRemoveBg = document.getElementById("remove-bg-check").checked;
 
-      ["drop-png", "drop-ogg", "drop-icon"].forEach(id => {
-        const zone = document.getElementById(id);
-        zone.classList.remove("input-error", "shake");
-        zone.querySelector(".initial-content").style.display = "flex";
-        
-        const preview = zone.querySelector(zone.classList.contains("drop-zone-extra") ? ".preview-media-small" : ".preview-media");
-        if (preview) { preview.style.display = "none"; preview.innerHTML = ""; }
-      });
-      
-      document.getElementById("advanced-toggle").checked = false;
-      closeAllDropdowns();
-      showToast("All fields reset", "success");
-    }
-  </script>
-</body>
+        preview.style.opacity = "0.5";
+        let fileToRender = file;
+        if (isRemoveBg) {
+          try {
+            fileToRender = await removeBackground(file);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        initial.style.display = "none";
+        preview.style.display = "flex";
+        preview.style.opacity = "1";
+        preview.innerHTML = "";
+
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(fileToRender);
+        img.style.backgroundImage =
+          "conic-gradient(var(--card-bg) 90deg, var(--input-bg) 90deg 180deg, var(--card-bg) 180deg 270deg, var(--input-bg) 270deg)";
+        img.style.backgroundSize = "20px 20px";
+        preview.appendChild(img);
+
+        const name = document.createElement("div");
+        name.style.fontSize = "0.8rem";
+        name.style.marginTop = "8px";
+        name.style.color = "var(--text-main)";
+        name.textContent = file.name + (isRemoveBg ? " (Processed)" : "");
+        preview.appendChild(name);
+      }
+
+      // handles resource pack creation
+      async function generatePack() {
+        const version = document.getElementById("version-select").value;
+        if (!version) {
+          document
+            .getElementById("version-dropdown-label")
+            .classList.add("input-error");
+          return showToast("Select a version!", "error");
+        }
+
+        const imageInput = document.getElementById("image").files[0];
+        const removeBgChecked =
+          document.getElementById("remove-bg-check").checked;
+        let finalImageFile = imageInput;
+
+        if (imageInput) {
+          try {
+            if (removeBgChecked) {
+              showToast("Removing background...", "info");
+              finalImageFile = await removeBackground(imageInput);
+            } else {
+              finalImageFile = await convertToPng(imageInput);
+            }
+          } catch (e) {
+            return showToast("Failed to process image.", "error");
+          }
+        }
+
+        let soundFile = document.getElementById("sound").files[0];
+        if (soundFile && !soundFile.name.endsWith(".ogg")) {
+          const modal = document.getElementById("progress-modal");
+          const bar = document.getElementById("progress-bar");
+          const text = document.getElementById("progress-text");
+          modal.style.display = "flex";
+          try {
+            soundFile = await convertToOgg(soundFile, (p) => {
+              bar.style.width = p + "%";
+              text.innerText = p + "%";
+            });
+            showToast("Audio converted!", "success");
+          } catch (err) {
+            modal.style.display = "none";
+            bar.style.width = "0%";
+            text.innerText = "0%";
+            return showToast("Audio conversion failed!", "error");
+          }
+          modal.style.display = "none";
+          bar.style.width = "0%";
+          text.innerText = "0%";
+        }
+
+        const zip = new JSZip();
+        const pName =
+          document.getElementById("pack-name").value.trim() ||
+          "Custom Totem Pack";
+        zip.file(
+          "pack.mcmeta",
+          JSON.stringify(
+            {
+              pack: {
+                pack_format: parseInt(version),
+                description:
+                  document.getElementById("pack-desc").value.trim() ||
+                  "Totem Pack",
+              },
+            },
+            null,
+            2,
+          ),
+        );
+
+        const tFolder = parseInt(version) >= 4 ? "item" : "items";
+        const assets = [
+          {
+            path: `assets/minecraft/textures/${tFolder}/totem_of_undying.png`,
+            file: finalImageFile,
+            default: DEFAULTS.texture,
+          },
+          {
+            path: "assets/minecraft/sounds/item/totem/use_totem.ogg",
+            file: soundFile,
+            default: DEFAULTS.sound,
+          },
+          {
+            path: "pack.png",
+            file:
+              document.getElementById("pack-icon-input").files[0] ||
+              finalImageFile,
+            default: DEFAULTS.icon,
+          },
+        ];
+
+        try {
+          await Promise.all(
+            assets.map(async (a) => {
+              if (a.file) zip.file(a.path, a.file);
+              else {
+                try {
+                  const res = await fetch(a.default);
+                  if (res.ok) zip.file(a.path, await res.blob());
+                } catch (e) {}
+              }
+            }),
+          );
+          zip
+            .generateAsync({ type: "blob" })
+            .then((c) =>
+              saveAs(
+                c,
+                pName.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".zip",
+              ),
+            );
+          showToast("Pack Downloaded!", "success");
+        } catch (err) {
+          showToast("Error generating pack", "error");
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("image").value = "";
+        document.getElementById("sound").value = "";
+        document.getElementById("pack-icon-input").value = "";
+        document.getElementById("pack-name").value = "";
+        document.getElementById("pack-desc").value = "";
+        document.getElementById("remove-bg-check").checked = false;
+        currentTextureFile = null;
+
+        document.getElementById("version-select").value = "";
+        document.getElementById("version-label-text").textContent =
+          "Select Minecraft Version...";
+
+        ["drop-png", "drop-ogg", "drop-icon"].forEach((id) => {
+          const zone = document.getElementById(id);
+          zone.classList.remove("input-error", "shake");
+          zone.querySelector(".initial-content").style.display = "flex";
+
+          const preview = zone.querySelector(
+            zone.classList.contains("drop-zone-extra")
+              ? ".preview-media-small"
+              : ".preview-media",
+          );
+          if (preview) {
+            preview.style.display = "none";
+            preview.innerHTML = "";
+          }
+        });
+
+        document.getElementById("advanced-toggle").checked = false;
+        closeAllDropdowns();
+        showToast("All fields reset", "success");
+      }
+    </script>
+  </body>
 </html>
