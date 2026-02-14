@@ -1,878 +1,52 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Skin to Totem</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skin to Totem</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-    <script>
-      var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };
-    </script>
-    <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  
+  <link rel="stylesheet" href="style.css">
 
-    <style>
-      :root {
-        --primary: #43b581;
-        --primary-hover: #3ca374;
-        --bg-color: #202225;
-        --card-bg: rgba(32, 34, 37, 0.95);
-        --input-bg: rgba(0, 0, 0, 0.2);
-        --border: rgba(255, 255, 255, 0.1);
-        --text-main: #ffffff;
-        --text-muted: #b9bbbe;
-        --error-color: #ef4444;
-        --success-color: #22c55e;
-        --nav-height: 70px;
-      }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+  <script>var OggVorbisEncoderConfig = { TOTAL_MEMORY: 67108864 };</script>
+  <script src="https://cdn.jsdelivr.net/gh/higuma/ogg-vorbis-encoder-js@master/lib/OggVorbisEncoder.js"></script>
+</head>
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+<body>
+  <input class="hidden-check" type="checkbox" id="theme" />
+  <label for="theme" class="theme-toggle">
+    <svg id="sun-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+      <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"></path>
+    </svg>
+    <svg id="moon-icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+    </svg>
+  </label>
+  
+  <div class="dark-back"></div>
+  <div class="light-back"></div>
 
-      body {
-        font-family: "Inter", sans-serif;
-        background: var(--bg-color);
-        background-image: url(background.png);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        background-attachment: fixed;
-        width: 100%;
-        min-height: 100vh;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        overflow-y: auto;
-        color: var(--text-main);
-        padding-top: calc(var(--nav-height) + 40px);
-        padding-bottom: 40px;
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: -1;
-      }
-
-      /* Navigation */
-      .topnav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: var(--nav-height);
-        padding: 0 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 1000;
-        background: rgba(32, 34, 37, 0.6);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-      }
-
-      .nav-left {
-        display: flex;
-        align-items: center;
-        gap: 40px;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        letter-spacing: -0.5px;
-        text-decoration: none;
-      }
-      .brand span {
-        background: linear-gradient(to bottom, #ffffff, #e2e8f0);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.15));
-      }
-      .brand img {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(67, 181, 129, 0.4);
-      }
-      .nav-links {
-        display: flex;
-        gap: 5px;
-      }
-      .nav-btn {
-        text-decoration: none;
-        color: var(--text-muted);
-        font-weight: 600;
-        padding: 8px 16px;
-        border-radius: 8px;
-        transition: all 0.2s;
-        font-size: 0.95rem;
-      }
-      .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-      }
-      .nav-btn.active {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .kofi-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background-color: #ff5e5b;
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
-        box-shadow: 0 4px 15px rgba(255, 94, 91, 0.3);
-      }
-      .kofi-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 94, 91, 0.5);
-      }
-      .kofi-btn svg {
-        width: 18px;
-        height: 18px;
-        stroke-width: 2.5;
-      }
-
-      /* Toasts */
-      #toast-container {
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        z-index: 10001;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        pointer-events: none;
-      }
-      .toast {
-        pointer-events: auto;
-        min-width: 300px;
-        max-width: 400px;
-        background: #2f3136;
-        border: 1px solid var(--border);
-        border-left: 4px solid;
-        padding: 16px;
-        border-radius: 8px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        opacity: 0;
-        transform: translateX(100%);
-        animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-      .toast.error {
-        border-left-color: var(--error-color);
-      }
-      .toast.error svg {
-        fill: var(--error-color);
-      }
-      .toast.success {
-        border-left-color: var(--success-color);
-      }
-      .toast.success svg {
-        fill: var(--success-color);
-      }
-      .toast-content {
-        font-size: 0.95rem;
-        color: #fff;
-        font-weight: 500;
-      }
-      @keyframes slideIn {
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-      @keyframes slideOut {
-        to {
-          opacity: 0;
-          transform: translateX(100%);
-        }
-      }
-
-      /* Loader */
-      #loading-screen {
-        position: fixed;
-        inset: 0;
-        background-color: var(--bg-color);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.8s ease;
-      }
-      .loader {
-        width: 60px;
-        aspect-ratio: 1;
-        --g1: conic-gradient(
-          from 90deg at 3px 3px,
-          #0000 90deg,
-          var(--primary) 0
-        );
-        --g2: conic-gradient(
-          from -90deg at 22px 22px,
-          #0000 90deg,
-          var(--primary) 0
-        );
-        background:
-          var(--g1), var(--g1), var(--g1), var(--g2), var(--g2), var(--g2);
-        background-size: 25px 25px;
-        background-repeat: no-repeat;
-        animation: l7 1.5s infinite;
-      }
-      .loader-text {
-        font-size: 1.2rem;
-        margin-top: 25px;
-        color: var(--text-muted);
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        font-weight: 600;
-      }
-      @keyframes l7 {
-        0% {
-          background-position:
-            0 0,
-            0 100%,
-            100% 100%;
-        }
-        25% {
-          background-position:
-            100% 0,
-            0 100%,
-            100% 100%;
-        }
-        50% {
-          background-position:
-            100% 0,
-            0 0,
-            100% 100%;
-        }
-        75% {
-          background-position:
-            100% 0,
-            0 0,
-            0 100%;
-        }
-        100% {
-          background-position:
-            100% 100%,
-            0 0,
-            0 100%;
-        }
-      }
-      .fadeOut {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      /* Main Container */
-      .container {
-        position: relative;
-        margin-top: 0;
-        width: 95%;
-        max-width: 1000px;
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 2.5rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.8s ease forwards 0.3s;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      @keyframes fadeInUp {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .reset-button {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 6px 12px;
-        gap: 8px;
-        height: 34px;
-        width: auto;
-        border: none;
-        background: rgba(255, 54, 43, 0.1);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        z-index: 10;
-      }
-      .lable {
-        font-size: 14px;
-        font-weight: 600;
-        color: #ff342b;
-      }
-      .reset-button:hover {
-        background: rgba(255, 54, 43, 0.2);
-      }
-      .reset-button:hover .svg-icon {
-        animation: spin 2s linear infinite;
-      }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(-360deg);
-        }
-      }
-
-      h1 {
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        text-transform: uppercase;
-        background: linear-gradient(to right, #fff, #b9bbbe);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2rem;
-      }
-
-      /* --- LAYOUT --- */
-      .main-grid {
-        display: grid;
-        grid-template-columns: 1fr 1.3fr;
-        gap: 2rem;
-      }
-      @media (max-width: 768px) {
-        .main-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .input-section {
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Drag Zone Mini */
-      .drop-zone-mini {
-        background: var(--input-bg);
-        border: 2px dashed var(--border);
-        border-radius: 12px;
-        height: 110px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        padding: 10px;
-      }
-      .drop-zone-mini:hover {
-        border-color: var(--primary);
-        background: rgba(67, 181, 129, 0.1);
-      }
-      .drop-zone-mini input {
-        display: none;
-      }
-      .drop-zone-mini svg {
-        width: 32px;
-        fill: var(--text-muted);
-      }
-      .drop-zone-text h4 {
-        font-size: 0.95rem;
-        color: white;
-        margin-bottom: 2px;
-      }
-      .drop-zone-text p {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-      }
-
-      /* OR Divider */
-      .or-divider {
-        display: flex;
-        align-items: center;
-        margin: 1.5rem 0;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .or-divider::before,
-      .or-divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: var(--border);
-      }
-      .or-divider span {
-        padding: 0 12px;
-      }
-
-      /* Inputs */
-      .skin-input-group {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 1.5rem;
-      }
-      .text-input,
-      select {
-        width: 100%;
-        padding: 12px 16px;
-        background: var(--input-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: white;
-        font-size: 1rem;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      .text-input:focus,
-      select:focus {
-        border-color: var(--primary);
-      }
-
-      .btn-fetch {
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 0 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-        white-space: nowrap;
-      }
-      .btn-fetch:hover {
-        background: var(--primary-hover);
-      }
-
-      /* --- Custom Dropdown Style --- */
-      .style-label {
-        margin-bottom: 0.5rem;
-        display: block;
-        font-weight: 600;
-        color: var(--text-muted);
-      }
-
-      .custom-dropdown {
-        position: relative;
-        width: 100%;
-        margin-bottom: 1rem;
-      }
-      .dropdown-trigger {
-        background: var(--input-bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        cursor: pointer;
-        transition: border-color 0.2s;
-        height: 60px;
-      }
-      .dropdown-trigger:hover {
-        border-color: rgba(255, 255, 255, 0.3);
-      }
-      .dropdown-trigger.open {
-        border-color: var(--primary);
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-
-      .dropdown-icon {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .dropdown-icon img {
-        width: 100%;
-        height: auto;
-        image-rendering: pixelated;
-      }
-
-      .dropdown-text {
-        flex: 1;
-      }
-      .dropdown-text h4 {
-        font-size: 0.95rem;
-        color: white;
-        margin-bottom: 2px;
-      }
-      .dropdown-text p {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-      }
-
-      .dropdown-arrow {
-        transition: transform 0.3s;
-      }
-      .dropdown-trigger.open .dropdown-arrow {
-        transform: rotate(180deg);
-      }
-
-      .dropdown-options {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: #202225; /* Solid bg to cover content below */
-        border: 1px solid var(--border);
-        border-top: none;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-        z-index: 50;
-        display: none;
-        overflow: hidden;
-      }
-      .dropdown-options.show {
-        display: block;
-      }
-
-      .dropdown-option {
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        cursor: pointer;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        transition: background 0.2s;
-      }
-      .dropdown-option:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      /* Checkbox Styling (Original Code) */
-      .checkbox-wrapper {
-        display: inline-flex;
-        align-items: center;
-        cursor: pointer;
-        position: relative;
-        margin-top: 5px;
-        padding: 8px 0;
-        width: 100%;
-      }
-      .checkbox-input {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-        cursor: pointer;
-      }
-      .checkbox-visual {
-        position: relative;
-        width: 22px;
-        height: 22px;
-        border-radius: 6px;
-        border: 2px solid var(--text-muted);
-        background-color: transparent;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        z-index: 2;
-      }
-      .checkbox-wrapper:hover .checkbox-visual {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 8px rgba(67, 181, 129, 0.15);
-      }
-      .checkbox-input:checked + .checkbox-visual {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(67, 181, 129, 0.4);
-      }
-      .checkbox-visual svg {
-        width: 14px;
-        height: 14px;
-        fill: white;
-        opacity: 0;
-        transform: scale(0.5);
-        transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46);
-      }
-      .checkbox-input:checked + .checkbox-visual svg {
-        opacity: 1;
-        transform: scale(1);
-      }
-      .checkbox-label-content {
-        margin-left: 12px;
-        display: flex;
-        flex-direction: column;
-      }
-      .checkbox-main-text {
-        font-size: 0.95rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        transition: color 0.2s;
-      }
-      .checkbox-input:checked ~ .checkbox-label-content .checkbox-main-text {
-        color: white;
-      }
-      .checkbox-subtext {
-        font-size: 0.75rem;
-        color: #72767d;
-        font-weight: 400;
-        margin-top: 2px;
-      }
-
-      /* Preview Area (No Hover Animation) */
-      .main-preview-area {
-        width: 100%;
-        height: 100%;
-        background: var(--input-bg);
-        border: 2px dashed var(--border);
-        border-radius: 16px;
-        min-height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-      }
-      .main-preview-area img {
-        height: 280px;
-        width: auto;
-        image-rendering: pixelated;
-        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
-        /* Animation removed */
-      }
-
-      /* Extras & Bottom */
-      .bottom-section {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      optgroup {
-        background: #2f3136;
-      }
-
-      .advanced-settings {
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        overflow: hidden;
-        background: rgba(0, 0, 0, 0.15);
-        transition: border-color 0.3s;
-      }
-      .advanced-settings[open] {
-        border-color: var(--primary);
-      }
-      .advanced-settings summary {
-        padding: 1rem;
-        cursor: pointer;
-        font-weight: 700;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        list-style: none;
-        transition: color 0.3s;
-      }
-      .advanced-settings summary:hover {
-        color: white;
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .advanced-settings summary::after {
-        content: "+";
-        font-size: 1.2rem;
-        font-weight: bold;
-        transition: transform 0.3s;
-      }
-      .advanced-settings[open] summary::after {
-        transform: rotate(45deg);
-      }
-      .settings-content {
-        padding: 1.5rem;
-        border-top: 1px solid var(--border);
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 15px;
-        animation: slideDown 0.3s ease;
-      }
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .drop-zone-extra {
-        background: var(--input-bg);
-        border: 1px dashed var(--border);
-        border-radius: 8px;
-        height: 80px;
-        display: flex;
-        align-items: center;
-        padding: 0 15px;
-        gap: 15px;
-        cursor: pointer;
-      }
-      .drop-zone-extra:hover {
-        border-color: var(--primary);
-      }
-      .drop-zone-extra input {
-        display: none;
-      }
-
-      .preview-media-small {
-        display: none;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-        overflow: hidden;
-      }
-      .preview-media-small img {
-        width: 40px;
-        height: 40px;
-      }
-      .file-name-small {
-        font-size: 0.8rem;
-        color: white;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      /* Download Button (Restored from index.html) */
-      .btn-download {
-        width: 100%;
-        padding: 1rem;
-        border: none;
-        border-radius: 8px;
-        background: var(--primary);
-        color: white;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition:
-          transform 0.2s,
-          background 0.2s;
-      }
-      .btn-download:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-      }
-      .btn-download:active {
-        transform: translateY(0);
-      }
-      .btn-download svg {
-        width: 24px;
-        fill: white;
-      }
-
-      /* Progress Modal */
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 10000;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(5px);
-      }
-      .modal-content {
-        background: var(--card-bg);
-        padding: 30px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      }
-      .progress-container {
-        width: 100%;
-        height: 8px;
-        background-color: var(--input-bg);
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 10px;
-      }
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background-color: var(--primary);
-        transition: width 0.3s ease;
-      }
-
-      .input-error {
-        border-color: var(--error-color) !important;
-        animation: shake 0.5s;
-      }
-      @keyframes shake {
-        0%,
-        100% {
-          transform: translateX(0);
-        }
-        25% {
-          transform: translateX(-5px);
-        }
-        75% {
-          transform: translateX(5px);
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="loading-screen">
-      <div class="loader"></div>
-      <div class="loader-text">Loading...</div>
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <div class="loader-text">Loading...</div>
+  </div>
+  <div id="toast-container"></div>
+  <div id="progress-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Processing...</h3>
+      <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
+      <p id="progress-text">0%</p>
     </div>
-    <div id="toast-container"></div>
+  </div>
 
+  <div class="app-wrapper">
     <div class="topnav">
       <div class="nav-left">
         <a href="index.html" class="brand">
@@ -881,17 +55,11 @@
         </a>
         <nav class="nav-links">
           <a href="index.html" class="nav-btn">Generator</a>
-          <a href="skin.html" class="nav-btn active">Skin to Totem</a>
+          <a href="skin-to-totem.html" class="nav-btn active">Skin to Totem</a>
         </nav>
       </div>
       <a href="https://ko-fi.com/harinezumi" target="_blank" class="kofi-btn">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
           <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
           <line x1="6" y1="1" x2="6" y2="4"></line>
@@ -903,22 +71,8 @@
     </div>
 
     <div class="container">
-      <button
-        class="reset-button"
-        onclick="resetForm()"
-        title="Reset all fields"
-      >
-        <svg
-          class="svg-icon"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ff342b"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
+      <button class="reset-button" onclick="resetForm()" title="Reset all fields">
+        <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff342b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
           <path d="M3 3v5h5"></path>
         </svg>
@@ -930,17 +84,10 @@
       <div class="main-grid">
         <div class="input-section">
           <label class="drop-zone-mini" id="drop-skin">
-            <div
-              class="initial-content"
-              style="display: flex; align-items: center; gap: 12px"
-            >
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
-                />
-              </svg>
+            <div class="initial-content" style="display: flex; align-items: center; gap: 12px">
+              <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
               <div class="drop-zone-text">
-                <h4>Drag Skin Img</h4>
+                <h4>Drag Skin Image</h4>
                 <p>Or click to upload</p>
               </div>
             </div>
@@ -951,610 +98,680 @@
           <div class="or-divider"><span>OR</span></div>
 
           <div class="skin-input-group">
-            <input
-              type="text"
-              id="username-input"
-              class="text-input"
-              placeholder="Username"
-            />
+            <input type="text" id="username-input" class="text-input" placeholder="Username" />
             <button class="btn-fetch" onclick="fetchSkin()">Load</button>
           </div>
 
           <label class="style-label">Style</label>
-          <div class="custom-dropdown" id="style-dropdown">
-            <div class="dropdown-trigger" onclick="toggleDropdown()">
-              <div class="dropdown-icon">
-                <img
-                  src="img/steve-tiny-preview.png"
-                  id="selected-style-icon"
-                  alt="icon"
-                />
-              </div>
-              <div class="dropdown-text">
-                <h4 id="selected-style-title">Mini me</h4>
-                <p id="selected-style-desc">A mini version of your skin!</p>
-              </div>
-              <div class="dropdown-arrow">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </div>
-            </div>
-            <div class="dropdown-options">
-              <div class="dropdown-option" onclick="selectStyle('mini')">
-                <div class="dropdown-icon">
-                  <img src="img/steve-tiny-preview.png" alt="mini" />
-                </div>
-                <div class="dropdown-text">
-                  <h4>Mini me</h4>
-                  <p>A mini version of your skin!</p>
+          <div class="pure-dropdown-container" id="style-dropdown">
+            <input class="hidden-check dropdown" type="checkbox" id="dropdown-style" name="dropdown-style"/>
+            <label class="for-dropdown" for="dropdown-style">
+              <div style="display: flex; align-items: center;">
+                <img src="img/steve-tiny-preview.png" id="selected-style-icon" class="style-preview-icon" alt="icon" />
+                <div>
+                  <div id="selected-style-title" style="line-height: 1;">Mini me</div>
+                  <div id="selected-style-desc" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">A mini version of your skin!</div>
                 </div>
               </div>
-              <div class="dropdown-option" onclick="selectStyle('full')">
-                <div class="dropdown-icon">
-                  <img src="img/steve-big-preview.png" alt="full" />
+              <i class="uil uil-angle-down"></i>
+            </label>
+            <div class="section-dropdown"> 
+              <a href="javascript:void(0)" onclick="selectStyle('mini')">
+                <img src="img/steve-tiny-preview.png" class="style-preview-icon" alt="mini" /> 
+                <div>
+                  <div style="line-height: 1;">Mini me</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">A mini version of your skin!</div>
                 </div>
-                <div class="dropdown-text">
-                  <h4>Full body</h4>
-                  <p>A full version of your skin!</p>
+              </a>
+              <a href="javascript:void(0)" onclick="selectStyle('full')">
+                <img src="img/steve-big-preview.png" class="style-preview-icon" alt="full" />
+                <div>
+                  <div style="line-height: 1;">Full body</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">A full version of your skin!</div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
 
-          <label class="checkbox-wrapper" for="outer-layer-check">
-            <input
-              type="checkbox"
-              id="outer-layer-check"
-              class="checkbox-input"
-              checked
-              onchange="fetchSkinIfUsername()"
-            />
-            <div class="checkbox-visual">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </div>
-            <div class="checkbox-label-content">
-              <span class="checkbox-main-text">Outer Layer</span>
-              <span class="checkbox-subtext"
-                >Include hat and jacket layers</span
-              >
-            </div>
-          </label>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label class="checkbox-wrapper" for="outer-layer-check">
+              <input type="checkbox" id="outer-layer-check" class="checkbox-input" checked onchange="fetchSkinIfUsername()" />
+              <div class="checkbox-visual"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+              <div class="checkbox-label-content"><span class="checkbox-main-text">Outer Layer</span><span class="checkbox-subtext">Include hat and jacket layers</span></div>
+            </label>
+
+            <label class="checkbox-wrapper" id="hd-layer-wrapper" for="hd-layer-check">
+              <input type="checkbox" id="hd-layer-check" class="checkbox-input" onchange="fetchSkinIfUsername()" />
+              <div class="checkbox-visual"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+              <div class="checkbox-label-content"><span class="checkbox-main-text">HD Totem</span><span class="checkbox-subtext">Use highly detailed 32x32 resolution</span></div>
+            </label>
+          </div>
         </div>
 
         <div class="main-preview-area" id="skin-preview">
-          <img
-            src="img/steve-tiny-preview.png"
-            id="main-preview-img"
-            alt="Preview"
-          />
+          <img src="img/steve-tiny-preview.png" id="main-preview-img" alt="Preview" />
         </div>
       </div>
 
       <div class="bottom-section">
         <div>
-          <label
-            style="
-              margin-bottom: 0.5rem;
-              display: block;
-              font-weight: 600;
-              color: var(--text-muted);
-            "
-            >Target Version</label
-          >
-          <select id="version-select">
-            <option value="" disabled selected>
-              Select Minecraft Version...
-            </option>
-            <optgroup label="1.21 (Tricky Trials)">
-              <option value="46">1.21.4</option>
-              <option value="42">1.21.2 - 1.21.3</option>
-              <option value="34">1.21 - 1.21.1</option>
-            </optgroup>
-            <optgroup label="1.20 (Trails & Tales)">
-              <option value="32">1.20.5 - 1.20.6</option>
-              <option value="22">1.20.3 - 1.20.4</option>
-              <option value="18">1.20.2</option>
-              <option value="15">1.20 - 1.20.1</option>
-            </optgroup>
-            <optgroup label="1.19 (The Wild Update)">
-              <option value="13">1.19.4</option>
-              <option value="12">1.19.3</option>
-              <option value="9">1.19 - 1.19.2</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <details class="advanced-settings">
-          <summary>Extra Settings</summary>
-          <div class="settings-content">
-            <label class="drop-zone-extra" id="drop-ogg">
-              <div
-                class="initial-content"
-                style="display: flex; align-items: center; gap: 10px"
-              >
-                <svg
-                  style="width: 24px; fill: var(--text-muted)"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"
-                  />
-                </svg>
-                <span style="color: var(--text-muted); font-weight: 600"
-                  >Sound (.ogg)</span
-                >
-              </div>
-              <div class="preview-media-small"></div>
-              <input type="file" id="sound" accept="audio/*" />
+          <label class="style-label">Target Version</label>
+          <div class="pure-dropdown-container">
+            <input class="hidden-check dropdown" type="checkbox" id="dropdown-version" name="dropdown-version"/>
+            <label class="for-dropdown" for="dropdown-version" id="version-dropdown-label">
+              <span id="version-label-text">Select Minecraft Version...</span> <i class="uil uil-angle-down"></i>
             </label>
-
-            <label class="drop-zone-extra" id="drop-icon">
-              <div
-                class="initial-content"
-                style="display: flex; align-items: center; gap: 10px"
-              >
-                <svg
-                  style="width: 24px; fill: var(--text-muted)"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
-                  />
-                </svg>
-                <span style="color: var(--text-muted); font-weight: 600"
-                  >Pack Icon</span
-                >
+            <div class="section-dropdown" id="version-select-box"> 
+              
+              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-21" name="v1-21"/>
+              <label class="for-dropdown-sub" for="v1-21">1.21 (Tricky Trials) <i class="uil uil-plus"></i></label>
+              <div class="section-dropdown-sub"> 
+                <a href="javascript:void(0)" onclick="selectVersion('46', '1.21.4')">1.21.4</a>
+                <a href="javascript:void(0)" onclick="selectVersion('42', '1.21.2 - 1.21.3')">1.21.2 - 1.21.3</a>
+                <a href="javascript:void(0)" onclick="selectVersion('34', '1.21 - 1.21.1')">1.21 - 1.21.1</a>
               </div>
-              <div class="preview-media-small"></div>
-              <input type="file" id="pack-icon-input" accept="image/png" />
-            </label>
 
-            <div style="grid-column: span 2">
-              <input
-                type="text"
-                id="pack-name"
-                class="text-input"
-                placeholder="Pack Name (e.g. My Skin Totem)"
-              />
-            </div>
-            <div style="grid-column: span 2">
-              <input
-                type="text"
-                id="pack-desc"
-                class="text-input"
-                placeholder="Pack Description"
-              />
+              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-20" name="v1-20"/>
+              <label class="for-dropdown-sub" for="v1-20">1.20 (Trails & Tales) <i class="uil uil-plus"></i></label>
+              <div class="section-dropdown-sub"> 
+                <a href="javascript:void(0)" onclick="selectVersion('32', '1.20.5 - 1.20.6')">1.20.5 - 1.20.6</a>
+                <a href="javascript:void(0)" onclick="selectVersion('22', '1.20.3 - 1.20.4')">1.20.3 - 1.20.4</a>
+                <a href="javascript:void(0)" onclick="selectVersion('18', '1.20.2')">1.20.2</a>
+                <a href="javascript:void(0)" onclick="selectVersion('15', '1.20 - 1.20.1')">1.20 - 1.20.1</a>
+              </div>
+
+              <input class="hidden-check dropdown-sub" type="checkbox" id="v1-19" name="v1-19"/>
+              <label class="for-dropdown-sub" for="v1-19">1.19 (The Wild Update) <i class="uil uil-plus"></i></label>
+              <div class="section-dropdown-sub"> 
+                <a href="javascript:void(0)" onclick="selectVersion('13', '1.19.4')">1.19.4</a>
+                <a href="javascript:void(0)" onclick="selectVersion('12', '1.19.3')">1.19.3</a>
+                <a href="javascript:void(0)" onclick="selectVersion('9', '1.19 - 1.19.2')">1.19 - 1.19.2</a>
+              </div>
+
             </div>
           </div>
-        </details>
+          <input type="hidden" id="version-select" value="">
+        </div>
+
+        <input class="hidden-check" type="checkbox" id="advanced-toggle"/>
+        <div class="advanced-settings-container">
+          <label class="advanced-toggle-label" for="advanced-toggle">
+            Extra Settings <i class="uil uil-plus"></i>
+          </label>
+          <div class="advanced-content-wrapper">
+            <div class="advanced-content-inner">
+              <div class="settings-content">
+                
+                <div style="grid-column: span 2; display: flex; gap: 15px;">
+                  <div id="sym-arms-wrapper" style="flex: 1; transition: opacity 0.3s ease;">
+                    <label class="style-label" style="font-size: 0.85rem;">Symmetrical Arms (Mini)</label>
+                    <div class="pure-dropdown-container">
+                      <input class="hidden-check dropdown" type="checkbox" id="dropdown-sym-arms" name="dropdown-sym-arms"/>
+                      <label class="for-dropdown" for="dropdown-sym-arms" style="padding: 10px 14px; font-size: 0.9rem;">
+                        <span id="sym-arms-label">Off</span> <i class="uil uil-angle-down"></i>
+                      </label>
+                      <div class="section-dropdown"> 
+                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'none', 'Off')">Off</a>
+                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'right-to-left', 'Reflect Right (to Left)')">Reflect Right (to Left)</a>
+                        <a href="javascript:void(0)" onclick="selectSymmetry('arms', 'left-to-right', 'Reflect Left (to Right)')">Reflect Left (to Right)</a>
+                      </div>
+                    </div>
+                    <input type="hidden" id="sym-arms" value="none">
+                  </div>
+
+                  <div id="sym-legs-wrapper" style="flex: 1; transition: opacity 0.3s ease;">
+                    <label class="style-label" style="font-size: 0.85rem;">Symmetrical Legs (Mini)</label>
+                    <div class="pure-dropdown-container">
+                      <input class="hidden-check dropdown" type="checkbox" id="dropdown-sym-legs" name="dropdown-sym-legs"/>
+                      <label class="for-dropdown" for="dropdown-sym-legs" style="padding: 10px 14px; font-size: 0.9rem;">
+                        <span id="sym-legs-label">Off</span> <i class="uil uil-angle-down"></i>
+                      </label>
+                      <div class="section-dropdown"> 
+                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'none', 'Off')">Off</a>
+                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'right-to-left', 'Reflect Right (to Left)')">Reflect Right (to Left)</a>
+                        <a href="javascript:void(0)" onclick="selectSymmetry('legs', 'left-to-right', 'Reflect Left (to Right)')">Reflect Left (to Right)</a>
+                      </div>
+                    </div>
+                    <input type="hidden" id="sym-legs" value="none">
+                  </div>
+                </div>
+
+                <label class="drop-zone-extra" id="drop-ogg">
+                  <div class="initial-content" style="display: flex; align-items: center; gap: 10px">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                    <span style="color: var(--text-muted); font-weight: 600">Sound</span>
+                  </div>
+                  <div class="preview-media-small"></div>
+                  <input type="file" id="sound" accept="audio/*" />
+                </label>
+
+                <label class="drop-zone-extra" id="drop-icon">
+                  <div class="initial-content" style="display: flex; align-items: center; gap: 10px">
+                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" /></svg>
+                    <span style="color: var(--text-muted); font-weight: 600">Pack Icon</span>
+                  </div>
+                  <div class="preview-media-small"></div>
+                  <input type="file" id="pack-icon-input" accept="image/png" />
+                </label>
+
+                <div style="grid-column: span 2">
+                  <input type="text" id="pack-name" class="text-input" placeholder="Custom Totem Pack" title="Hint: Enter a unique name for your resource pack to identify it easily in Minecraft!" />
+                </div>
+                <div style="grid-column: span 2">
+                  <input type="text" id="pack-desc" class="text-input" placeholder="Pack Description" />
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
 
         <button class="btn-download" onclick="generatePack()">
-          <svg viewBox="0 0 24 24">
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
           Download Resource Pack
         </button>
       </div>
     </div>
 
-    <div id="progress-modal" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Processing...</h3>
-        <div class="progress-container">
-          <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <p id="progress-text">0%</p>
-      </div>
-    </div>
+  </div> <script>
+    function showToast(message, type = "error") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      let svgPath = type === "error" ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
+      if(type === "info") svgPath = "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z";
+      
+      toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${svgPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => { 
+        toast.style.animation = "slideOut 0.4s ease forwards"; 
+        toast.addEventListener("animationend", () => toast.remove()); 
+      }, 4000);
+    }
 
-    <script>
-      const DEFAULTS = { sound: "./sound_totem.ogg", icon: "./pack.png" };
-      let currentSkinBlob = null;
-      let selectedStyle = "mini";
+    const DEFAULTS = { sound: "./sound_totem.ogg", icon: "./pack.png" };
 
-      window.addEventListener("load", () => {
-        document
-          .getElementById("version-select")
-          .addEventListener("change", function () {
-            this.classList.remove("input-error");
-          });
-        setTimeout(() => {
-          document.getElementById("loading-screen").classList.add("fadeOut");
-          setTimeout(
-            () =>
-              (document.getElementById("loading-screen").style.display =
-                "none"),
-            800,
-          );
-        }, 800);
-        document
-          .getElementById("username-input")
-          .addEventListener("keypress", (e) => {
-            if (e.key === "Enter") fetchSkin();
-          });
+    let originalSkinImage = null; 
+    let currentSkinBlob = null; 
+    let selectedStyle = "mini";
 
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (e) {
-          const dropdown = document.getElementById("style-dropdown");
-          const trigger = dropdown.querySelector(".dropdown-trigger");
-          const options = dropdown.querySelector(".dropdown-options");
-          if (!dropdown.contains(e.target)) {
-            options.classList.remove("show");
-            trigger.classList.remove("open");
+    // --- DROPDOWN ACCORDION & POSITION LOGIC ---
+    function closeOtherDropdowns(current, selector) {
+      document.querySelectorAll(selector).forEach(cb => {
+        if (cb !== current) {
+          cb.checked = false;
+          cb.classList.remove('drop-up-active');
+          const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
+          if (menu) menu.classList.remove('drop-up');
+        }
+      });
+    }
+
+    function calculateDropdownPosition(cb) {
+      const container = cb.closest('.pure-dropdown-container');
+      const menu = container.querySelector('.section-dropdown');
+      const trigger = container.querySelector('.for-dropdown');
+      if (!menu || !trigger) return;
+
+      menu.classList.remove('drop-up');
+      cb.classList.remove('drop-up-active');
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const menuHeight = Math.max(menu.scrollHeight, 250); 
+
+      if (triggerRect.bottom + menuHeight > window.innerHeight - 20) {
+        menu.classList.add('drop-up');
+        cb.classList.add('drop-up-active');
+      }
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dropdown, .dropdown-sub').forEach(cb => {
+        cb.checked = false;
+        cb.classList.remove('drop-up-active');
+        const menu = cb.closest('.pure-dropdown-container')?.querySelector('.section-dropdown');
+        if (menu) menu.classList.remove('drop-up');
+      });
+    }
+
+    function selectVersion(val, text) {
+      document.getElementById('version-select').value = val;
+      document.getElementById('version-label-text').textContent = text;
+      document.getElementById('version-dropdown-label').classList.remove("input-error");
+      closeAllDropdowns();
+    }
+
+    function selectSymmetry(type, val, text) {
+      document.getElementById(`sym-${type}`).value = val;
+      document.getElementById(`sym-${type}-label`).textContent = text;
+      closeAllDropdowns();
+      if (selectedStyle === 'mini') renderTotem();
+    }
+
+    function selectStyle(style) {
+      selectedStyle = style;
+      closeAllDropdowns();
+
+      const icon = document.getElementById("selected-style-icon");
+      const title = document.getElementById("selected-style-title");
+      const desc = document.getElementById("selected-style-desc");
+      
+      const hdCheck = document.getElementById("hd-layer-check");
+      const hdWrapper = document.getElementById("hd-layer-wrapper");
+      
+      const symArmsSelect = document.getElementById("dropdown-sym-arms");
+      const symLegsSelect = document.getElementById("dropdown-sym-legs");
+      const symArmsWrapper = document.getElementById("sym-arms-wrapper");
+      const symLegsWrapper = document.getElementById("sym-legs-wrapper");
+
+      if (style === "mini") {
+        icon.src = "img/steve-tiny-preview.png";
+        title.textContent = "Mini me";
+        desc.textContent = "A mini version of your skin!";
+        
+        hdCheck.disabled = false; hdWrapper.style.opacity = "1"; hdWrapper.style.cursor = "pointer";
+        symArmsSelect.disabled = false; symLegsSelect.disabled = false;
+        symArmsWrapper.style.opacity = "1"; symLegsWrapper.style.opacity = "1"; symArmsWrapper.style.pointerEvents = "auto"; symLegsWrapper.style.pointerEvents = "auto";
+
+      } else {
+        icon.src = "img/steve-big-preview.png";
+        title.textContent = "Full body";
+        desc.textContent = "A full version of your skin!";
+        
+        hdCheck.checked = true; hdCheck.disabled = true; hdWrapper.style.opacity = "0.5"; hdWrapper.style.cursor = "not-allowed";
+        symArmsSelect.disabled = true; symLegsSelect.disabled = true;
+        symArmsWrapper.style.opacity = "0.5"; symLegsWrapper.style.opacity = "0.5"; symArmsWrapper.style.pointerEvents = "none"; symLegsWrapper.style.pointerEvents = "none";
+      }
+
+      const username = document.getElementById("username-input").value.trim();
+      if (username) fetchSkin(true);
+      else if (originalSkinImage && style === "mini") renderTotem();
+      else if (currentSkinBlob && style === "full") updateMainPreview(currentSkinBlob);
+      else {
+        const img = document.getElementById("main-preview-img");
+        if (img) img.src = style === "mini" ? "img/steve-tiny-preview.png" : "img/steve-big-preview.png";
+      }
+    }
+
+    // --- Init & Listeners ---
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("loading-screen").classList.add("fadeOut");
+        setTimeout(() => (document.getElementById("loading-screen").style.display = "none"), 800);
+      }, 800);
+      
+      document.getElementById("username-input").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") fetchSkin();
+      });
+
+      document.querySelectorAll('.dropdown').forEach(cb => {
+        cb.addEventListener('change', function() {
+          if (this.checked) {
+            closeOtherDropdowns(this, '.dropdown');
+            calculateDropdownPosition(this); 
+          } else {
+            this.classList.remove('drop-up-active');
+            const menu = this.parentElement.querySelector('.section-dropdown');
+            if (menu) menu.classList.remove('drop-up');
+            const subs = this.parentElement.querySelectorAll('.dropdown-sub');
+            subs.forEach(sub => sub.checked = false);
           }
         });
       });
 
-      function showToast(message, type = "error") {
-        const container = document.getElementById("toast-container");
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-        const iconPath =
-          type === "error"
-            ? "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-            : "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z";
-        toast.innerHTML = `<svg style="width:24px; height:24px" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="${iconPath}" clip-rule="evenodd"/></svg><span class="toast-content">${message}</span>`;
-        container.appendChild(toast);
-        setTimeout(() => {
-          toast.style.animation = "slideOut 0.4s ease forwards";
-          toast.addEventListener("animationend", () => toast.remove());
-        }, 4000);
-      }
-
-      // --- Dropdown Logic ---
-      function toggleDropdown() {
-        const trigger = document.querySelector(".dropdown-trigger");
-        const options = document.querySelector(".dropdown-options");
-        trigger.classList.toggle("open");
-        options.classList.toggle("show");
-      }
-
-      function selectStyle(style) {
-        selectedStyle = style;
-
-        // Update Trigger UI
-        const icon = document.getElementById("selected-style-icon");
-        const title = document.getElementById("selected-style-title");
-        const desc = document.getElementById("selected-style-desc");
-
-        if (style === "mini") {
-          icon.src = "img/steve-tiny-preview.png";
-          title.textContent = "Mini me";
-          desc.textContent = "A mini version of your skin!";
-        } else {
-          icon.src = "img/steve-big-preview.png";
-          title.textContent = "Full body";
-          desc.textContent = "A full version of your skin!";
-        }
-
-        toggleDropdown(); // Close menu
-
-        // Update logic
-        const username = document.getElementById("username-input").value.trim();
-        if (username) {
-          fetchSkin(); // Refetch if username exists
-        } else {
-          // Update the Steve placeholder if no user is loaded
-          const img = document.getElementById("main-preview-img");
-          if (img)
-            img.src =
-              style === "mini"
-                ? "img/steve-tiny-preview.png"
-                : "img/steve-big-preview.png";
-        }
-      }
-
-      // --- Checkbox Logic ---
-      function fetchSkinIfUsername() {
-        const username = document.getElementById("username-input").value.trim();
-        if (username) fetchSkin();
-      }
-
-      // --- Drag & Drop ---
-      function initDropZone(zoneId, inputId) {
-        const zone = document.getElementById(zoneId);
-        const input = document.getElementById(inputId);
-        const initial = zone.querySelector(".initial-content");
-        const isSmall =
-          zone.classList.contains("drop-zone-extra") ||
-          zone.classList.contains("drop-zone-mini");
-        const preview = isSmall
-          ? zone.querySelector(".preview-media-small")
-          : null;
-
-        ["dragenter", "dragover", "dragleave", "drop"].forEach((eName) =>
-          zone.addEventListener(
-            eName,
-            (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            },
-            false,
-          ),
-        );
-        zone.addEventListener(
-          "dragenter",
-          () => (zone.style.borderColor = "var(--primary)"),
-        );
-        zone.addEventListener(
-          "dragleave",
-          () => (zone.style.borderColor = "var(--border)"),
-        );
-        zone.addEventListener("drop", (e) => {
-          zone.style.borderColor = "var(--border)";
-          if (e.dataTransfer.files.length) {
-            input.files = e.dataTransfer.files;
-            handleFiles(e.dataTransfer.files);
-          }
+      document.querySelectorAll('.dropdown-sub').forEach(cb => {
+        cb.addEventListener('change', function() {
+          if (this.checked) closeOtherDropdowns(this, '.dropdown-sub');
         });
-        input.addEventListener("change", (e) => handleFiles(e.target.files));
+      });
 
-        function handleFiles(files) {
-          if (!files.length) return;
-          const file = files[0];
-          const isImg = file.type.startsWith("image/");
+      window.addEventListener('resize', () => {
+        document.querySelectorAll('.dropdown:checked').forEach(cb => calculateDropdownPosition(cb));
+      });
 
-          if (inputId === "skin-file-input") {
-            if (!isImg) return showToast("Upload an image file", "error");
-            currentSkinBlob = file;
-            updateMainPreview(file);
-            document.getElementById("username-input").value = "";
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest('.pure-dropdown-container')) closeAllDropdowns();
+      });
+    });
+
+    // --- Drag & Drop ---
+    function initDropZone(zoneId, inputId) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      const isExtra = zone.classList.contains("drop-zone-extra");
+      const preview = zone.querySelector(isExtra ? ".preview-media-small" : ".preview-media");
+      const initial = zone.querySelector(".initial-content");
+
+      let dragCounter = 0;
+      let isErrorActive = false;
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false));
+
+      zone.addEventListener('dragenter', () => { dragCounter++; if (!isErrorActive) zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => { dragCounter--; if (dragCounter <= 0) { dragCounter = 0; zone.classList.remove('dragover'); }});
+
+      zone.addEventListener('drop', (e) => {
+        dragCounter = 0; zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; handleFiles(e.dataTransfer.files); }
+      });
+
+      input.addEventListener("change", (e) => handleFiles(e.target.files));
+
+      function triggerError(msg) {
+        isErrorActive = true; zone.classList.remove('dragover'); zone.classList.add("input-error", "shake");
+        input.value = ""; showToast(msg, "error");
+        setTimeout(() => zone.classList.remove("shake"), 500);
+        setTimeout(() => { zone.classList.remove("input-error"); isErrorActive = false; }, 2000);
+      }
+
+      function handleFiles(files) {
+        if (!files.length) return;
+        const file = files[0];
+
+        if (file.size > 10 * 1024 * 1024) return triggerError("File is too big! Max 10MB.");
+
+        const isImg = inputId === "skin-file-input" || inputId === "pack-icon-input";
+        if (isImg && !file.type.startsWith("image/")) return triggerError("Please upload an image file!");
+        if (!isImg && !file.type.startsWith("audio/")) return triggerError("Please upload an audio file!");
+
+        zone.classList.remove("input-error");
+
+        if (inputId === "skin-file-input") {
+          document.getElementById("username-input").value = "";
+          if (selectedStyle === "mini") {
+            const img = new Image();
+            img.onload = () => { originalSkinImage = img; renderTotem(); };
+            img.src = URL.createObjectURL(file);
           } else {
-            initial.style.display = "none";
-            preview.style.display = "flex";
-            preview.innerHTML = "";
-
-            const info = document.createElement("div");
-            info.className = "file-name-small";
-            info.textContent = file.name;
-
-            if (isImg) {
-              const img = document.createElement("img");
-              img.src = URL.createObjectURL(file);
-              preview.appendChild(img);
-            } else {
-              const svg = document.createElement("div");
-              svg.innerHTML =
-                '<svg style="width:24px; fill:#fff" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
-              preview.appendChild(svg);
-            }
-            preview.appendChild(info);
+            currentSkinBlob = file; updateMainPreview(file);
           }
+
+          initial.style.display = "none";
+          if (preview) {
+            preview.style.display = "flex"; preview.innerHTML = "";
+            const prevImg = document.createElement("img"); prevImg.src = URL.createObjectURL(file);
+            const info = document.createElement("div"); info.className = "file-name-small"; info.textContent = file.name;
+            preview.appendChild(prevImg); preview.appendChild(info);
+          }
+        } else {
+          initial.style.display = "none"; preview.style.display = "flex"; preview.innerHTML = "";
+          
+          if (inputId === "sound") {
+            const el = document.createElement("audio"); el.src = URL.createObjectURL(file); el.controls = true; preview.appendChild(el);
+          } else if (isExtra && isImg) {
+            const el = document.createElement("img"); el.src = URL.createObjectURL(file); preview.appendChild(el);
+          }
+          
+          const name = document.createElement("div"); name.className = isExtra ? "file-name-small" : "";
+          if (!isExtra) { name.style.marginTop = "8px"; name.style.fontSize = "0.8rem"; name.style.color = "var(--text-main)"; }
+          name.textContent = file.name; preview.appendChild(name);
+        }
+      }
+    }
+
+    initDropZone("drop-skin", "skin-file-input");
+    initDropZone("drop-ogg", "sound");
+    initDropZone("drop-icon", "pack-icon-input");
+
+    function updateMainPreview(blob) {
+      const box = document.getElementById("skin-preview");
+      box.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(blob);
+      img.id = "main-preview-img";
+      box.appendChild(img);
+    }
+
+    function renderTotem() {
+      if (!originalSkinImage || selectedStyle !== "mini") return;
+
+      const canvas = document.createElement("canvas");
+      const isHD = document.getElementById("hd-layer-check").checked;
+      const scale = isHD ? 2 : 1; 
+
+      canvas.width = 16 * scale;
+      canvas.height = 16 * scale;
+      
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+
+      const drawOuter = document.getElementById("outer-layer-check").checked;
+      const isOldSkin = originalSkinImage.height === 32;
+
+      function drawPart(srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH, flipX = false) {
+        dstX *= scale; dstY *= scale; dstW *= scale; dstH *= scale;
+        if (flipX) {
+          ctx.save(); ctx.scale(-1, 1);
+          ctx.drawImage(originalSkinImage, srcX, srcY, srcW, srcH, -dstX - dstW, dstY, dstW, dstH);
+          ctx.restore();
+        } else {
+          ctx.drawImage(originalSkinImage, srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH);
         }
       }
 
-      initDropZone("drop-skin", "skin-file-input");
-      initDropZone("drop-ogg", "sound");
-      initDropZone("drop-icon", "pack-icon-input");
+      drawPart(8, 8, 8, 8, 4, 0, 8, 8);
+      if (drawOuter) drawPart(40, 8, 8, 8, 4, 0, 8, 8);
+      drawPart(20, 20, 8, 12, 4, 8, 8, 6);
+      if (drawOuter && !isOldSkin) drawPart(20, 36, 8, 12, 4, 8, 8, 6);
 
-      function updateMainPreview(blob) {
-        const box = document.getElementById("skin-preview");
-        box.innerHTML = "";
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(blob);
-        img.id = "main-preview-img";
-        box.appendChild(img);
+      function _drawArm(isRightSource, isRightDest) {
+          if (isOldSkin && !isRightSource) isRightSource = true; 
+          const flip = (isRightSource !== isRightDest);
+          const dX_shoulder = isRightDest ? 12 : 1;
+          const dX_main = isRightDest ? 12 : 1;
+          const dX_palm = isRightDest ? 12 : 2;
+          const dX_pixel = isRightDest ? 12 : 3;
+
+          const srcX = isRightSource ? 44 : 36;
+          const srcY = isRightSource ? 20 : 52;
+          const outX = isRightSource ? 44 : 52; 
+          const outY = isRightSource ? 36 : 52; 
+
+          drawPart(srcX, srcY, 4, 1, dX_shoulder, 7, 3, 1, flip);
+          if (drawOuter && !isOldSkin) drawPart(outX, outY - 1, 4, 2, dX_shoulder, 7, 3, 1, flip);
+          drawPart(srcX, srcY + 1, 4, 10, dX_main, 8, 3, 2, flip);
+          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 10, dX_main, 8, 3, 2, flip);
+          drawPart(srcX, srcY + 11, 4, 1, dX_palm, 10, 2, 1, flip);
+          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX_main, 8, 3, 2, flip);
+          drawPart(srcX, srcY + 11, 4, 1, dX_pixel, 9, 1, 1, flip);
+          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX_pixel, 9, 1, 1, flip);
       }
 
-      async function convertToOgg(rawFile, onProgress) {
-        const audioCtx = new (
-          window.AudioContext || window.webkitAudioContext
-        )();
-        const arrayBuffer = await rawFile.arrayBuffer();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        const channel0 = audioBuffer.getChannelData(0);
-        let monoData = channel0;
-        if (audioBuffer.numberOfChannels > 1) {
-          const channel1 = audioBuffer.getChannelData(1);
-          monoData = new Float32Array(channel0.length);
-          for (let i = 0; i < channel0.length; i++)
-            monoData[i] = (channel0[i] + channel1[i]) / 2;
-        }
-        const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
-        const CHUNK_LEN = audioBuffer.sampleRate * 3;
-        for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
-          encoder.encode([
-            monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length)),
-          ]);
-          onProgress &&
-            onProgress(
-              Math.round(
-                (Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) *
-                  100,
-              ),
-            );
-          await new Promise((r) => setTimeout(r, 5));
-        }
-        return encoder.finish();
+      function _drawLeg(isRightSource, isRightDest) {
+          if (isOldSkin && !isRightSource) isRightSource = true;
+          const flip = (isRightSource !== isRightDest);
+          const dX = isRightDest ? 8 : 5;
+          
+          const srcX = isRightSource ? 4 : 20;
+          const srcY = isRightSource ? 20 : 52;
+          const outX = isRightSource ? 4 : 4;
+          const outY = isRightSource ? 36 : 52;
+
+          drawPart(srcX, srcY, 4, 12, dX, 14, 3, 2, flip);
+          if (drawOuter && !isOldSkin) drawPart(outX, outY, 4, 12, dX, 14, 3, 2, flip);
       }
 
-      async function fetchSkin() {
-        const username = document.getElementById("username-input").value.trim();
-        const outerLayer = document.getElementById("outer-layer-check").checked;
-        const btn = document.querySelector(".btn-fetch");
+      const symArms = document.getElementById("sym-arms").value;
+      const symLegs = document.getElementById("sym-legs").value;
 
-        if (!username) return showToast("Enter a username", "error");
+      if (symArms === "right-to-left") { _drawArm(true, true); _drawArm(true, false); } 
+      else if (symArms === "left-to-right") { _drawArm(false, true); _drawArm(false, false); } 
+      else { _drawArm(true, true); _drawArm(false, false); }
 
-        btn.disabled = true;
-        btn.textContent = "...";
+      if (symLegs === "right-to-left") { _drawLeg(true, true); _drawLeg(true, false); } 
+      else if (symLegs === "left-to-right") { _drawLeg(false, true); _drawLeg(false, false); } 
+      else { _drawLeg(true, true); _drawLeg(false, false); }
 
-        // --- LOGIC: Fetch URL based on Checkbox (Outer Layer) ---
-        // Armor = Outer layer included. Body = No outer layer.
-        let baseUrl = outerLayer
-          ? "https://minotar.net/armor/body/"
-          : "https://minotar.net/body/";
+      function clearCorner(x, y, w, h) { ctx.clearRect(x * scale, y * scale, w * scale, h * scale); }
+      clearCorner(4, 0, 1, 1); clearCorner(11, 0, 1, 1); clearCorner(4, 13, 1, 1);
+      clearCorner(11, 13, 1, 1); clearCorner(5, 15, 1, 1); clearCorner(10, 15, 1, 1);
 
-        // --- LOGIC: Placeholder for Mini vs Full ---
-        // If "Mini" is selected, the user asked for a placeholder "Steve" if clicked.
-        // But here we are fetching a REAL user.
-        // We will fetch the real user regardless, but maybe changing the endpoint slightly
-        // (Minotar doesn't really have a 'mini' endpoint, just size).
-        // For now, we stick to the standard logic for actual users.
+      canvas.toBlob((blob) => { currentSkinBlob = blob; updateMainPreview(blob); }, "image/png");
+    }
+
+    function fetchSkinIfUsername() {
+      const username = document.getElementById("username-input").value.trim();
+      if (selectedStyle === "mini" && originalSkinImage) renderTotem();
+      else if (selectedStyle === "full" && username) fetchSkin(true);
+    }
+
+    function clearFileUI() {
+      document.getElementById("skin-file-input").value = "";
+      const dropInitial = document.querySelector("#drop-skin .initial-content");
+      const dropPreview = document.querySelector("#drop-skin .preview-media-small");
+      if (dropInitial) dropInitial.style.display = "flex";
+      if (dropPreview) { dropPreview.style.display = "none"; dropPreview.innerHTML = ""; }
+    }
+
+    async function convertToOgg(rawFile, onProgress) {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const arrayBuffer = await rawFile.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      const channel0 = audioBuffer.getChannelData(0);
+      let monoData = channel0;
+      if (audioBuffer.numberOfChannels > 1) {
+        const channel1 = audioBuffer.getChannelData(1);
+        monoData = new Float32Array(channel0.length);
+        for (let i = 0; i < channel0.length; i++) monoData[i] = (channel0[i] + channel1[i]) / 2;
+      }
+      const encoder = new OggVorbisEncoder(audioBuffer.sampleRate, 1);
+      const CHUNK_LEN = audioBuffer.sampleRate * 3;
+      for (let i = 0; i < monoData.length; i += CHUNK_LEN) {
+        encoder.encode([monoData.subarray(i, Math.min(i + CHUNK_LEN, monoData.length))]);
+        if (onProgress) onProgress(Math.round((Math.min(i + CHUNK_LEN, monoData.length) / monoData.length) * 100));
+        await new Promise(r => setTimeout(r, 5));
+      }
+      return encoder.finish();
+    }
+
+    async function fetchSkin(silent = false) {
+      const username = document.getElementById("username-input").value.trim();
+      const outerLayer = document.getElementById("outer-layer-check").checked;
+      const btn = document.querySelector(".btn-fetch");
+
+      if (!username) { if(!silent) showToast("Enter a username", "error"); return; }
+      btn.disabled = true; btn.textContent = "...";
+
+      if (selectedStyle === "full") {
+        let baseUrl = outerLayer ? "https://minotar.net/armor/body/" : "https://minotar.net/body/";
         const url = `${baseUrl}${username}/128.png`;
-
         try {
           const res = await fetch(url);
           if (!res.ok) throw new Error("Err");
           currentSkinBlob = await res.blob();
           updateMainPreview(currentSkinBlob);
-
-          if (!document.getElementById("pack-name").value)
-            document.getElementById("pack-name").value = `${username}'s Totem`;
-          showToast("Skin loaded!", "success");
-
-          document.getElementById("skin-file-input").value = "";
-          const dropInitial = document.querySelector(
-            "#drop-skin .initial-content",
-          );
-          const dropPreview = document.querySelector(
-            "#drop-skin .preview-media-small",
-          );
-          if (dropInitial) dropInitial.style.display = "flex";
-          if (dropPreview) {
-            dropPreview.style.display = "none";
-            dropPreview.innerHTML = "";
-          }
+          if (!silent) showToast("Skin loaded!", "success");
+          clearFileUI();
         } catch (err) {
-          showToast("User not found", "error");
-          currentSkinBlob = null;
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Load";
-        }
-      }
-
-      async function generatePack() {
-        const version = document.getElementById("version-select").value;
-        if (!version) {
-          document
-            .getElementById("version-select")
-            .classList.add("input-error");
-          return showToast("Select a version!", "error");
-        }
-        if (!currentSkinBlob)
-          return showToast("Load or upload a skin first!", "error");
-
-        let soundFile = document.getElementById("sound").files[0];
-        const modal = document.getElementById("progress-modal");
-        if (soundFile && !soundFile.name.endsWith(".ogg")) {
-          modal.style.display = "flex";
-          try {
-            soundFile = await convertToOgg(soundFile, (p) => {
-              document.getElementById("progress-bar").style.width = p + "%";
-            });
-          } catch (err) {
-            modal.style.display = "none";
-            return showToast("Audio conversion failed", "error");
-          }
-          modal.style.display = "none";
-        }
-
-        const zip = new JSZip();
-        const pName =
-          document.getElementById("pack-name").value.trim() || "Skin Totem";
-        zip.file(
-          "pack.mcmeta",
-          JSON.stringify(
-            {
-              pack: {
-                pack_format: parseInt(version),
-                description:
-                  document.getElementById("pack-desc").value.trim() ||
-                  "Totem Pack",
-              },
-            },
-            null,
-            2,
-          ),
-        );
-
-        const tFolder = parseInt(version) >= 4 ? "item" : "items";
-        const assets = [
-          {
-            path: `assets/minecraft/textures/${tFolder}/totem_of_undying.png`,
-            file: currentSkinBlob,
-            default: null,
-          },
-          {
-            path: "assets/minecraft/sounds/item/totem/use_totem.ogg",
-            file: soundFile,
-            default: DEFAULTS.sound,
-          },
-          {
-            path: "pack.png",
-            file:
-              document.getElementById("pack-icon-input").files[0] ||
-              currentSkinBlob,
-            default: DEFAULTS.icon,
-          },
-        ];
-
+          if (!silent) showToast("User not found", "error"); currentSkinBlob = null;
+        } finally { btn.disabled = false; btn.textContent = "Load"; }
+      } else {
+        const url = `https://minotar.net/skin/${username}`;
         try {
-          await Promise.all(
-            assets.map(async (a) => {
-              if (a.file) zip.file(a.path, a.file);
-              else if (a.default) {
-                try {
-                  const r = await fetch(a.default);
-                  if (r.ok) zip.file(a.path, await r.blob());
-                } catch (e) {}
-              }
-            }),
-          );
-          zip
-            .generateAsync({ type: "blob" })
-            .then((c) =>
-              saveAs(
-                c,
-                pName.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".zip",
-              ),
-            );
-          showToast("Pack Downloaded!", "success");
+          const res = await fetch(url);
+          if (!res.ok) throw new Error("Err");
+          const blob = await res.blob();
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            try {
+              originalSkinImage = img; renderTotem();
+              if (!silent) showToast("Skin loaded!", "success");
+              clearFileUI();
+            } catch (e) {
+              if (!silent) showToast("Error rendering skin", "error");
+            } finally { btn.disabled = false; btn.textContent = "Load"; }
+          };
+          img.onerror = () => { if (!silent) showToast("Error parsing skin image", "error"); btn.disabled = false; btn.textContent = "Load"; };
+          img.src = URL.createObjectURL(blob);
         } catch (err) {
-          showToast("Error generating pack", "error");
+          if (!silent) showToast("User not found", "error");
+          originalSkinImage = null; btn.disabled = false; btn.textContent = "Load";
         }
       }
+    }
 
-      function resetForm() {
-        document.getElementById("version-select").selectedIndex = 0;
-        document.getElementById("username-input").value = "";
-        document.getElementById("pack-name").value = "";
-        document.getElementById("pack-desc").value = "";
-        document.getElementById("sound").value = "";
-        document.getElementById("pack-icon-input").value = "";
-        document.getElementById("skin-file-input").value = "";
-        document.getElementById("outer-layer-check").checked = true;
-        currentSkinBlob = null;
-
-        document
-          .querySelectorAll(".initial-content")
-          .forEach((el) => (el.style.display = "flex"));
-        document.querySelectorAll(".preview-media-small").forEach((el) => {
-          el.style.display = "none";
-          el.innerHTML = "";
-        });
-
-        selectStyle("mini");
-        showToast("Reset successful", "success");
+    async function generatePack() {
+      const version = document.getElementById("version-select").value;
+      if (!version) {
+        document.getElementById("version-dropdown-label").classList.add("input-error");
+        return showToast("Select a version!", "error");
       }
-    </script>
-  </body>
+      if (!currentSkinBlob) return showToast("Load or upload a skin first!", "error");
+
+      let soundFile = document.getElementById("sound").files[0];
+      if (soundFile && !soundFile.name.endsWith(".ogg")) {
+        const modal = document.getElementById("progress-modal");
+        const bar = document.getElementById("progress-bar");
+        const text = document.getElementById("progress-text");
+        modal.style.display = "flex";
+        try {
+          soundFile = await convertToOgg(soundFile, (p) => { bar.style.width = p + "%"; text.innerText = p + "%"; });
+          showToast("Audio converted!", "success");
+        } catch (err) { 
+          modal.style.display = "none"; 
+          bar.style.width = "0%"; text.innerText = "0%";
+          return showToast("Audio conversion failed!", "error"); 
+        }
+        modal.style.display = "none"; 
+        bar.style.width = "0%"; text.innerText = "0%";
+      }
+
+      const zip = new JSZip();
+      const pName = document.getElementById("pack-name").value.trim() || "Custom Totem Pack";
+      zip.file("pack.mcmeta", JSON.stringify({ pack: { pack_format: parseInt(version), description: document.getElementById("pack-desc").value.trim() || "Totem Pack" } }, null, 2));
+
+      const tFolder = parseInt(version) >= 4 ? "item" : "items";
+      const assets = [
+        { path: `assets/minecraft/textures/${tFolder}/totem_of_undying.png`, file: currentSkinBlob, default: null },
+        { path: "assets/minecraft/sounds/item/totem/use_totem.ogg", file: soundFile, default: DEFAULTS.sound },
+        { path: "pack.png", file: document.getElementById("pack-icon-input").files[0] || currentSkinBlob, default: DEFAULTS.icon }
+      ];
+
+      try {
+        await Promise.all(assets.map(async (a) => {
+          if (a.file) zip.file(a.path, a.file);
+          else if (a.default) { try { const r = await fetch(a.default); if (r.ok) zip.file(a.path, await r.blob()); } catch (e) {} }
+        }));
+        zip.generateAsync({ type: "blob" }).then((c) => saveAs(c, pName.replace(/[^a-z0-9]/gi, "_").toLowerCase() + ".zip"));
+        showToast("Pack Downloaded!", "success");
+      } catch (err) { showToast("Error generating pack", "error"); }
+    }
+
+    function resetForm() {
+      document.getElementById("username-input").value = "";
+      document.getElementById("pack-name").value = "";
+      document.getElementById("pack-desc").value = "";
+      document.getElementById("sound").value = "";
+      document.getElementById("pack-icon-input").value = "";
+      document.getElementById("skin-file-input").value = "";
+      
+      document.getElementById("version-select").value = "";
+      document.getElementById("version-label-text").textContent = "Select Minecraft Version...";
+      
+      selectSymmetry('arms', 'none', 'Off');
+      selectSymmetry('legs', 'none', 'Off');
+      
+      document.getElementById("outer-layer-check").checked = true;
+      
+      const hdCheck = document.getElementById("hd-layer-check");
+      const hdWrapper = document.getElementById("hd-layer-wrapper");
+      hdCheck.checked = false; hdCheck.disabled = false;
+      hdWrapper.style.opacity = "1"; hdWrapper.style.cursor = "pointer";
+
+      originalSkinImage = null; currentSkinBlob = null;
+
+      document.querySelectorAll(".initial-content").forEach((el) => (el.style.display = "flex"));
+      document.querySelectorAll(".preview-media-small").forEach((el) => { el.style.display = "none"; el.innerHTML = ""; });
+
+      document.getElementById("advanced-toggle").checked = false;
+      closeAllDropdowns();
+
+      selectStyle("mini");
+      showToast("Reset successful", "success");
+    }
+  </script>
+</body>
 </html>
