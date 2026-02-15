@@ -546,6 +546,11 @@ h1 {
   border-color: var(--primary);
   background: rgba(67, 181, 129, 0.05);
 }
+.drop-zone-mini.dragover,
+.drop-zone-extra.dragover {
+  border-color: var(--primary);
+  background: rgba(67, 181, 129, 0.1);
+}
 .drop-zone-mini input,
 .drop-zone-extra input {
   display: none;
@@ -998,11 +1003,19 @@ h1 {
   opacity: 0;
   pointer-events: none;
 }
-.input-error {
+.input-error,
+.drop-zone-mini.input-error:hover,
+.drop-zone-extra.input-error:hover {
   border-color: var(--error-color) !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
   animation: shake 0.5s;
 }
-
+.input-error svg,
+.drop-zone-mini.input-error:hover svg,
+.drop-zone-extra.input-error:hover svg,
+.drop-zone-large.input-error:hover svg {
+  fill: var(--error-color) !important;
+}
 /* mobile responsiveness */
 @media (max-width: 768px) {
   .main-grid {

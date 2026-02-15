@@ -910,7 +910,7 @@
         ["drop-png", "drop-ogg", "drop-icon"].forEach((id) => {
           const zone = document.getElementById(id);
           zone.classList.remove("input-error", "shake");
-          zone.querySelector(".initial-content").style.display = "flex";
+          zone.querySelector(".initial-content").style.display = "";
 
           const preview = zone.querySelector(
             zone.classList.contains("drop-zone-extra")
