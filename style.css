@@ -301,7 +301,7 @@ body {
   margin-left: 12px;
   transition: all 200ms linear;
 }
-.dropdown-sub:checked ~ .section-dropdown-sub {
+.dropdown-sub:checked + .for-dropdown-sub + .section-dropdown-sub {
   max-height: 500px;
   opacity: 1;
   margin-top: 5px;

@@ -160,6 +160,31 @@
               <div class="section-dropdown-sub">
                 <a
                   href="javascript:void(0)"
+                  onclick="selectVersion('75', '1.21.11')"
+                  >1.21.11</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('71', '1.21.9 - 1.21.10')"
+                  >1.21.9 - 1.21.10</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('64', '1.21.7 - 1.21.8')"
+                  >1.21.7 - 1.21.8</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('63', '1.21.6')"
+                  >1.21.6</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('55', '1.21.5')"
+                  >1.21.5</a
+                >
+                <a
+                  href="javascript:void(0)"
                   onclick="selectVersion('46', '1.21.4')"
                   >1.21.4</a
                 >
@@ -261,6 +286,11 @@
                 >
                 <a
                   href="javascript:void(0)"
+                  onclick="selectVersion('5', '1.15 - 1.16.1')"
+                  >1.15 - 1.16.1</a
+                >
+                <a
+                  href="javascript:void(0)"
                   onclick="selectVersion('4', '1.13 - 1.14.x')"
                   >1.13 - 1.14.x</a
                 >
@@ -268,6 +298,16 @@
                   href="javascript:void(0)"
                   onclick="selectVersion('3', '1.11 - 1.12.x')"
                   >1.11 - 1.12.x</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('2', '1.9 - 1.10.x')"
+                  >1.9 - 1.10.x</a
+                >
+                <a
+                  href="javascript:void(0)"
+                  onclick="selectVersion('1', '1.6.1 - 1.8.x')"
+                  >1.6.1 - 1.8.x</a
                 >
               </div>
             </div>
@@ -395,6 +435,15 @@
     </div>
 
     <script>
+      // theme persistence
+      const themeToggle = document.getElementById("theme");
+      if (localStorage.getItem("totemTheme") === "light") {
+        themeToggle.checked = true;
+      }
+      themeToggle.addEventListener("change", (e) => {
+        localStorage.setItem("totemTheme", e.target.checked ? "light" : "dark");
+      });
+
       function showToast(message, type = "error") {
         const container = document.getElementById("toast-container");
         const toast = document.createElement("div");
