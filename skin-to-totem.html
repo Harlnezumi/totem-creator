@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Skin to Totem</title>
+    <link rel="icon" type="image/png" href="img/totem.png" />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
@@ -709,6 +710,27 @@
       let currentSkinBlob = null;
       let selectedStyle = "mini";
 
+      function toggleOuterLayerCheckbox(isOldSkin) {
+        const checkbox = document.getElementById("outer-layer-check");
+        const wrapper = checkbox.closest(".checkbox-wrapper");
+
+        if (isOldSkin) {
+          checkbox.checked = false;
+          checkbox.disabled = true;
+          if (wrapper) {
+            wrapper.style.opacity = "0.5";
+            wrapper.style.cursor = "not-allowed";
+          }
+        } else {
+          checkbox.disabled = false;
+          checkbox.checked = true;
+          if (wrapper) {
+            wrapper.style.opacity = "1";
+            wrapper.style.cursor = "pointer";
+          }
+        }
+      }
+
       // Dropdown accordion config
       function closeOtherDropdowns(current, selector) {
         document.querySelectorAll(selector).forEach((cb) => {
@@ -978,6 +1000,9 @@
                 );
               }
 
+              // Enable/Disable the Outer Layer checkbox based on skin format
+              toggleOuterLayerCheckbox(img.height === 32);
+
               // Proceed with processing the valid skin
               if (selectedStyle === "mini") {
                 originalSkinImage = img;
@@ -1040,9 +1065,21 @@
         const box = document.getElementById("skin-preview");
         box.innerHTML = "";
         const img = document.createElement("img");
-        img.src = URL.createObjectURL(blob);
+
+        // Generate the URL for the blob
+        const imageUrl = URL.createObjectURL(blob);
+        img.src = imageUrl;
         img.id = "main-preview-img";
         box.appendChild(img);
+
+        // Update the website favicon
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement("link");
+          link.rel = "icon";
+          document.head.appendChild(link);
+        }
+        link.href = imageUrl;
       }
 
       // Add skin preview to the drop-zone when fetched via username
@@ -1269,6 +1306,23 @@
         btn.disabled = true;
         btn.textContent = "...";
 
+        // Verify if the Minecraft player actually exists
+        try {
+          const profileCheck = await fetch(
+            `https://api.ashcon.app/mojang/v2/user/${username}`,
+          );
+          if (profileCheck.status === 404) {
+            if (!silent) showToast("This player does not exist!", "error");
+            btn.disabled = false;
+            btn.textContent = "Load";
+            return;
+          }
+        } catch (err) {
+          console.warn(
+            "Validation API unreachable, proceeding to fetch skin...",
+          );
+        }
+
         if (selectedStyle === "full") {
           let baseUrl = outerLayer
             ? "https://minotar.net/armor/body/"
@@ -1301,6 +1355,9 @@
             img.crossOrigin = "anonymous";
             img.onload = () => {
               try {
+                // Enable/Disable the Outer Layer checkbox based on skin format
+                toggleOuterLayerCheckbox(img.height === 32);
+
                 originalSkinImage = img;
                 renderTotem();
 
@@ -1447,7 +1504,15 @@
         selectSymmetry("arms", "none", "Off");
         selectSymmetry("legs", "none", "Off");
 
-        document.getElementById("outer-layer-check").checked = true;
+        // Reset the outer layer checkbox visually and functionally
+        const outerCheck = document.getElementById("outer-layer-check");
+        const outerWrapper = outerCheck.closest(".checkbox-wrapper");
+        outerCheck.checked = true;
+        outerCheck.disabled = false;
+        if (outerWrapper) {
+          outerWrapper.style.opacity = "1";
+          outerWrapper.style.cursor = "pointer";
+        }
 
         const hdCheck = document.getElementById("hd-layer-check");
         const hdWrapper = document.getElementById("hd-layer-wrapper");
@@ -1466,6 +1531,10 @@
         document.querySelectorAll(".preview-media-small").forEach((el) => {
           el.style.display = "none";
           el.innerHTML = "";
+
+          // Reset the favicon
+          let link = document.querySelector("link[rel~='icon']");
+          if (link) link.href = "img/totem.png";
         });
 
         document.getElementById("advanced-toggle").checked = false;
